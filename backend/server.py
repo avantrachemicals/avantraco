@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timezone
@@ -838,3 +839,24 @@ async def get_stats(db: Session = Depends(get_db)):
     product_count = db.query(Product).count()
     dealer_count = db.query(Dealer).filter(Dealer.is_approved == True).count()
     return {"products": product_count, "dealers": dealer_count, "farmers": "12000", "states": "10"}
+
+
+# ============================================
+# SERVE REACT FRONTEND (for cPanel deployment)
+# ============================================
+FRONTEND_BUILD = os.path.join(os.path.dirname(__file__), 'public')
+
+if os.path.isdir(FRONTEND_BUILD):
+    app.mount("/static", StaticFiles(directory=os.path.join(FRONTEND_BUILD, "static")), name="static-files")
+
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        # Try to serve the exact file first
+        file_path = os.path.join(FRONTEND_BUILD, full_path)
+        if full_path and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        # Otherwise serve index.html (React SPA routing)
+        index_path = os.path.join(FRONTEND_BUILD, "index.html")
+        if os.path.isfile(index_path):
+            return FileResponse(index_path)
+        raise HTTPException(status_code=404, detail="Not found")
