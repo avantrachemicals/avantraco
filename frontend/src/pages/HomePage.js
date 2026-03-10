@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
-import { ArrowRight, Sprout, Users, MapPin, Award, FlaskConical, Quote, ChevronRight, Dna, Microscope, Leaf, Zap, Clock, Shield } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ArrowRight, Sprout, Users, MapPin, Award, FlaskConical, Quote, ChevronRight, Dna, Microscope, Leaf, Zap, Clock, Shield, Play, X } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -22,10 +23,13 @@ export default function HomePage() {
   const phyto = t.phytocode || translations.en.phytocode;
   const [products, setProducts] = useState([]);
   const [settings, setSettings] = useState({});
+  const [videoTestimonials, setVideoTestimonials] = useState([]);
+  const [selectedVideo, setSelectedVideo] = useState(null);
 
   useEffect(() => {
     axios.get(`${API}/products?featured=true`).then(r => setProducts(r.data)).catch(() => {});
     axios.get(`${API}/settings`).then(r => setSettings(r.data)).catch(() => {});
+    axios.get(`${API}/testimonials/videos?featured_only=true`).then(r => setVideoTestimonials(r.data)).catch(() => {});
   }, []);
 
   const heroImage = settings.hero_image || "https://images.unsplash.com/photo-1757031298556-c0c5c4b01e64?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODh8MHwxfHNlYXJjaHwyfHxyb3clMjBjcm9wcyUyMGFncmljdWx0dXJlJTIwZmllbGQlMjBncmVlbnxlbnwwfHx8fDE3NzMxNDQ1NjR8MA&ixlib=rb-4.1.0&q=85";
@@ -255,6 +259,86 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Video Testimonials */}
+      {videoTestimonials.length > 0 && (
+        <section className="py-20 md:py-32 bg-white" data-testid="video-testimonials-section">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <Badge className="bg-[#D9F99D] text-[#044736] mb-4">Farmer Stories</Badge>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Video Testimonials</h2>
+              <p className="text-lg text-gray-500 max-w-2xl mx-auto">Watch real farmers share their success stories with Avantra products</p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {videoTestimonials.map((video) => (
+                <Card key={video.id} className="border-0 shadow-sm rounded-2xl overflow-hidden group cursor-pointer" onClick={() => setSelectedVideo(video)} data-testid={`video-testimonial-${video.id}`}>
+                  <div className="relative aspect-video bg-gray-100">
+                    {video.thumbnail_url ? (
+                      <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#044736] to-[#066d52]">
+                        <Play className="h-16 w-16 text-white/80" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/50 transition-colors">
+                      <div className="h-16 w-16 rounded-full bg-white/90 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <Play className="h-8 w-8 text-[#044736] ml-1" />
+                      </div>
+                    </div>
+                  </div>
+                  <CardContent className="p-5">
+                    <h3 className="font-bold text-gray-900 mb-1">{video.title}</h3>
+                    <p className="text-sm text-gray-500">{video.farmer_name}{video.location ? `, ${video.location}` : ""}</p>
+                    {video.crop && <Badge variant="outline" className="mt-2 text-xs">{video.crop}</Badge>}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Video Modal */}
+      <Dialog open={!!selectedVideo} onOpenChange={() => setSelectedVideo(null)}>
+        <DialogContent className="max-w-4xl p-0 bg-black border-0 rounded-2xl overflow-hidden">
+          {selectedVideo && (
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 right-4 text-white hover:bg-white/20 z-10 rounded-full"
+                onClick={() => setSelectedVideo(null)}
+              >
+                <X className="h-6 w-6" />
+              </Button>
+              <div className="aspect-video">
+                {selectedVideo.video_url.includes("youtube") || selectedVideo.video_url.includes("youtu.be") ? (
+                  <iframe
+                    src={selectedVideo.video_url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : selectedVideo.video_url.includes("vimeo") ? (
+                  <iframe
+                    src={selectedVideo.video_url.replace("vimeo.com/", "player.vimeo.com/video/")}
+                    className="w-full h-full"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video src={selectedVideo.video_url} controls className="w-full h-full" />
+                )}
+              </div>
+              <div className="p-6 bg-black text-white">
+                <h3 className="text-xl font-bold mb-1">{selectedVideo.title}</h3>
+                <p className="text-gray-400">{selectedVideo.farmer_name}{selectedVideo.location ? `, ${selectedVideo.location}` : ""}</p>
+                {selectedVideo.quote && <p className="text-gray-300 mt-4 italic">"{selectedVideo.quote}"</p>}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* CTA Section */}
       <section className="py-20 md:py-32 section-dark" data-testid="cta-section">

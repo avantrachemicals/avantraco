@@ -16,6 +16,9 @@ import JobDetailPage from "@/pages/JobDetailPage";
 import TermsPage from "@/pages/TermsPage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import CorporatePage from "@/pages/CorporatePage";
+import GalleryPage from "@/pages/GalleryPage";
+import MediaCenterPage from "@/pages/MediaCenterPage";
+import BlogPostPage from "@/pages/BlogPostPage";
 
 function App() {
   return (
@@ -33,6 +36,9 @@ function App() {
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/careers" element={<CareersPage />} />
               <Route path="/careers/:jobId" element={<JobDetailPage />} />
+              <Route path="/gallery" element={<GalleryPage />} />
+              <Route path="/media" element={<MediaCenterPage />} />
+              <Route path="/media/:slug" element={<BlogPostPage />} />
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/corporate" element={<CorporatePage />} />

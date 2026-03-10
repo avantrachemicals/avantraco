@@ -34,6 +34,8 @@ export default function Navbar() {
     { href: "/", label: t.home },
     { href: "/about", label: t.about },
     { href: "/products", label: t.products },
+    { href: "/gallery", label: "Gallery" },
+    { href: "/media", label: "Media" },
     { href: "/dealers", label: t.dealers },
     { href: "/careers", label: t.careers },
     { href: "/contact", label: t.contact },

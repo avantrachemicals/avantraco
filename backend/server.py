@@ -104,6 +104,39 @@ class JobApplicationCreate(BaseModel):
     payslip_base64: Optional[str] = None
 
 
+# --- Gallery Image Model ---
+class GalleryImageCreate(BaseModel):
+    title: str = ""
+    description: str = ""
+    image_url: str
+    category: str = "general"  # general, factory, team, events, products
+    is_featured: bool = False
+
+
+# --- Blog Post Model ---
+class BlogPostCreate(BaseModel):
+    title: str
+    slug: str = ""
+    featured_image: str = ""
+    excerpt: str = ""
+    content: str = ""
+    links: List[Dict[str, str]] = []  # [{title, url}]
+    is_published: bool = True
+    tags: List[str] = []
+
+
+# --- Video Testimonial Model ---
+class VideoTestimonialCreate(BaseModel):
+    title: str
+    farmer_name: str
+    location: str = ""
+    crop: str = ""
+    video_url: str  # YouTube/Vimeo embed URL or direct video URL
+    thumbnail_url: str = ""
+    quote: str = ""
+    is_featured: bool = False
+
+
 # --- Auth ---
 def create_token(data: dict):
     payload = {**data, "exp": datetime.now(timezone.utc) + timedelta(hours=24)}
@@ -341,6 +374,121 @@ async def update_application_status(app_id: str, status: str, _=Depends(verify_a
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Application not found")
     return {"message": f"Status updated to {status}"}
+
+
+# --- Gallery ---
+@api_router.get("/gallery")
+async def list_gallery_images(category: Optional[str] = None):
+    query = {} if not category or category == "all" else {"category": category}
+    images = await db.gallery.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return images
+
+
+@api_router.post("/gallery")
+async def create_gallery_image(data: GalleryImageCreate, _=Depends(verify_admin)):
+    doc = data.model_dump()
+    doc["id"] = str(uuid.uuid4())
+    doc["created_at"] = datetime.now(timezone.utc).isoformat()
+    await db.gallery.insert_one(doc)
+    return {k: v for k, v in doc.items() if k != "_id"}
+
+
+@api_router.put("/gallery/{image_id}")
+async def update_gallery_image(image_id: str, data: GalleryImageCreate, _=Depends(verify_admin)):
+    update_data = data.model_dump()
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    result = await db.gallery.update_one({"id": image_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Image not found")
+    return await db.gallery.find_one({"id": image_id}, {"_id": 0})
+
+
+@api_router.delete("/gallery/{image_id}")
+async def delete_gallery_image(image_id: str, _=Depends(verify_admin)):
+    result = await db.gallery.delete_one({"id": image_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Image not found")
+    return {"message": "Image deleted"}
+
+
+# --- Blog Posts (Media Center) ---
+@api_router.get("/blog")
+async def list_blog_posts(published_only: bool = True):
+    query = {"is_published": True} if published_only else {}
+    posts = await db.blog_posts.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return posts
+
+
+@api_router.get("/blog/{slug}")
+async def get_blog_post(slug: str):
+    post = await db.blog_posts.find_one({"slug": slug}, {"_id": 0})
+    if not post:
+        raise HTTPException(status_code=404, detail="Blog post not found")
+    return post
+
+
+@api_router.post("/blog")
+async def create_blog_post(data: BlogPostCreate, _=Depends(verify_admin)):
+    doc = data.model_dump()
+    doc["id"] = str(uuid.uuid4())
+    doc["slug"] = doc["slug"] or doc["title"].lower().replace(" ", "-").replace("'", "")[:50]
+    doc["created_at"] = datetime.now(timezone.utc).isoformat()
+    doc["updated_at"] = doc["created_at"]
+    await db.blog_posts.insert_one(doc)
+    return {k: v for k, v in doc.items() if k != "_id"}
+
+
+@api_router.put("/blog/{post_id}")
+async def update_blog_post(post_id: str, data: BlogPostCreate, _=Depends(verify_admin)):
+    update_data = data.model_dump()
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    result = await db.blog_posts.update_one({"id": post_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return await db.blog_posts.find_one({"id": post_id}, {"_id": 0})
+
+
+@api_router.delete("/blog/{post_id}")
+async def delete_blog_post(post_id: str, _=Depends(verify_admin)):
+    result = await db.blog_posts.delete_one({"id": post_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return {"message": "Post deleted"}
+
+
+# --- Video Testimonials ---
+@api_router.get("/testimonials/videos")
+async def list_video_testimonials(featured_only: bool = False):
+    query = {"is_featured": True} if featured_only else {}
+    videos = await db.video_testimonials.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return videos
+
+
+@api_router.post("/testimonials/videos")
+async def create_video_testimonial(data: VideoTestimonialCreate, _=Depends(verify_admin)):
+    doc = data.model_dump()
+    doc["id"] = str(uuid.uuid4())
+    doc["created_at"] = datetime.now(timezone.utc).isoformat()
+    await db.video_testimonials.insert_one(doc)
+    return {k: v for k, v in doc.items() if k != "_id"}
+
+
+@api_router.put("/testimonials/videos/{video_id}")
+async def update_video_testimonial(video_id: str, data: VideoTestimonialCreate, _=Depends(verify_admin)):
+    update_data = data.model_dump()
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    result = await db.video_testimonials.update_one({"id": video_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Video not found")
+    return await db.video_testimonials.find_one({"id": video_id}, {"_id": 0})
+
+
+@api_router.delete("/testimonials/videos/{video_id}")
+async def delete_video_testimonial(video_id: str, _=Depends(verify_admin)):
+    result = await db.video_testimonials.delete_one({"id": video_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Video not found")
+    return {"message": "Video deleted"}
 
 
 # --- Seed ---
