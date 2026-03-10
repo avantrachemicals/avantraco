@@ -84,10 +84,10 @@ export default function CorporatePage() {
                     <p className="text-gray-600 mb-4">{t.corporateAddr}</p>
                     <div className="space-y-2 text-sm text-gray-500">
                       <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4" /> +91 80 XXXX XXXX
+                        <Phone className="h-4 w-4" /> +91-9030559163
                       </div>
                       <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4" /> info@avantrachemicals.com
+                        <Mail className="h-4 w-4" /> support@avantra.in
                       </div>
                     </div>
                   </div>

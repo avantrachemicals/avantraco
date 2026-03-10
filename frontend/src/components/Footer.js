@@ -84,11 +84,11 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-[#D9F99D] shrink-0" />
-                <span className="text-gray-400 text-sm">+91 80 XXXX XXXX</span>
+                <span className="text-gray-400 text-sm">+91-9030559163</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-[#D9F99D] shrink-0" />
-                <span className="text-gray-400 text-sm">info@avantrachemicals.com</span>
+                <span className="text-gray-400 text-sm">support@avantra.in</span>
               </li>
             </ul>
             

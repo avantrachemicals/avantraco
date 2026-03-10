@@ -72,7 +72,8 @@ export default function PrivacyPage() {
                 Avantra Chemicals Pvt Ltd<br />
                 No.5, RKM Street, Halasuru<br />
                 Bengaluru - 560068<br />
-                Email: privacy@avantrachemicals.com
+                Email: support@avantra.in<br />
+                Phone: +91-9030559163
               </p>
             </CardContent>
           </Card>

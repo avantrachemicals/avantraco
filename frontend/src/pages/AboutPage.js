@@ -1,15 +1,24 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { useLanguage } from "@/context/LanguageContext";
 import { translations } from "@/data/translations";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { FlaskConical, Users, Target, Eye, Award, MapPin, Calendar, Building2, GraduationCap } from "lucide-react";
+import { FlaskConical, Users, Target, Eye, Award, MapPin, Calendar, Building2, GraduationCap, Dna, Zap, Clock, Shield, Microscope } from "lucide-react";
 
+const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const FARM_IMG = "https://images.unsplash.com/photo-1643474004250-05d73e1473e0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjd8MHwxfHNlYXJjaHwyfHxmYXJtZXIlMjBmaWVsZCUyMGhhcnZlc3QlMjB2ZWdldGFibGVzJTIwZnJ1aXRzfGVufDB8fHx8MTc3MzEzOTU0N3ww&ixlib=rb-4.1.0&q=85";
 
 export default function AboutPage() {
   const { language } = useLanguage();
   const t = translations[language]?.about || translations.en.about;
+  const phyto = translations[language]?.phytocode || translations.en.phytocode;
+  const [settings, setSettings] = useState({});
+
+  useEffect(() => {
+    axios.get(`${API}/settings`).then(r => setSettings(r.data)).catch(() => {});
+  }, []);
 
   const timeline = [
     { date: "Jan 2024", title: language === 'en' ? "Company Founded" : language === 'te' ? "కంపెనీ స్థాపన" : language === 'kn' ? "ಕಂಪನಿ ಸ್ಥಾಪನೆ" : "कंपनी स्थापना", desc: language === 'en' ? "Avantra Chemicals Pvt Ltd incorporated in Bengaluru, Karnataka" : "Bengaluru, Karnataka", icon: Calendar },
@@ -76,23 +85,66 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Phytocode Technology */}
-      <section className="py-20 bg-white" data-testid="phytocode-section">
+      {/* Phytocode Technology - Detailed */}
+      <section className="py-20 md:py-32 section-dark" data-testid="phytocode-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto text-center">
-            <FlaskConical className="h-12 w-12 text-emerald-600 mx-auto mb-4" />
-            <h2 className="text-3xl sm:text-4xl text-gray-900 mb-6">{t.phytocodeTitle}</h2>
-            <p className="text-base text-gray-600 leading-relaxed mb-8">{t.phytocodeDesc}</p>
-            <div className="grid grid-cols-3 gap-6">
-              {[
-                { label: language === 'en' ? "Multi-Nutrient Stability" : "Stability", color: "bg-emerald-100 text-emerald-700" },
-                { label: language === 'en' ? "Longer Viability" : "Viability", color: "bg-blue-100 text-blue-700" },
-                { label: language === 'en' ? "Slow Nutrient Release" : "Slow Release", color: "bg-orange-100 text-orange-700" },
-              ].map((item, i) => (
-                <div key={i} className={`rounded-xl p-4 ${item.color}`}>
-                  <p className="text-sm font-semibold">{item.label}</p>
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div>
+              <Badge className="bg-[#D9F99D]/20 text-[#D9F99D] border-[#D9F99D]/30 mb-6 text-sm font-semibold px-4 py-1.5">
+                <Dna className="h-4 w-4 mr-2" /> {language === 'en' ? 'Breakthrough Innovation' : language === 'te' ? 'ప్రగతిశీల ఆవిష్కరణ' : language === 'kn' ? 'ಪ್ರಗತಿಶೀಲ ಆವಿಷ್ಕಾರ' : 'अभूतपूर्व नवाचार'}
+              </Badge>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight text-balance font-accent">
+                {phyto.title}
+              </h2>
+              <p className="text-lg text-gray-300 leading-relaxed mb-8">
+                {phyto.intro}
+              </p>
+              
+              <div className="space-y-6 mb-8">
+                {[
+                  { icon: Zap, title: phyto.benefit1Title, desc: phyto.benefit1Desc },
+                  { icon: Clock, title: phyto.benefit2Title, desc: phyto.benefit2Desc },
+                  { icon: Shield, title: phyto.benefit3Title, desc: phyto.benefit3Desc }
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-4 items-start">
+                    <div className="h-12 w-12 rounded-xl bg-[#D9F99D]/10 flex items-center justify-center shrink-0">
+                      <item.icon className="h-6 w-6 text-[#D9F99D]" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-white mb-1">{item.title}</h4>
+                      <p className="text-sm text-gray-400">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                <div className="flex items-center gap-3 mb-3">
+                  <Microscope className="h-6 w-6 text-[#D9F99D]" />
+                  <h4 className="font-semibold text-white">{phyto.howItWorksTitle}</h4>
                 </div>
-              ))}
+                <p className="text-sm text-gray-400 leading-relaxed">{phyto.howItWorksDesc}</p>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-transparent rounded-3xl" />
+              <img
+                src={settings.phytocode_image || "https://images.pexels.com/photos/8851401/pexels-photo-8851401.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"}
+                alt="Phytocode Technology"
+                className="rounded-3xl shadow-2xl w-full h-80 lg:h-[550px] object-cover"
+              />
+              <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-5 shadow-xl max-w-xs">
+                <div className="flex items-center gap-4">
+                  <div className="h-14 w-14 rounded-full bg-[#D9F99D] flex items-center justify-center">
+                    <FlaskConical className="h-7 w-7 text-[#044736]" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-gray-900">{language === 'en' ? 'Proprietary Tech' : language === 'te' ? 'స్వంత టెక్' : language === 'kn' ? 'ಸ್ವಂತ ತಂತ್ರಜ್ಞಾನ' : 'स्वामित्व तकनीक'}</div>
+                    <div className="text-xs text-gray-500">{language === 'en' ? 'Nano-encapsulation + Bio-matrix' : 'Nano + Bio-matrix'}</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

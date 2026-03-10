@@ -86,6 +86,8 @@ Build a complete, production-ready multipage website for Avantra Chemicals Pvt L
 
 ## Credentials
 - Admin Password: `avantra2024`
+- Contact Email: `support@avantra.in`
+- Contact Phone: `+91-9030559163`
 
 ## File Structure
 ```

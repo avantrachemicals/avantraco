@@ -105,11 +105,11 @@ export default function ContactPage() {
                 <CardContent className="p-5 space-y-3">
                   <div className="flex items-center gap-3">
                     <Phone className="h-5 w-5 text-orange-500" />
-                    <span className="text-sm text-gray-700">+91 80 XXXX XXXX</span>
+                    <span className="text-sm text-gray-700">+91-9030559163</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Mail className="h-5 w-5 text-red-500" />
-                    <span className="text-sm text-gray-700">info@avantrachemicals.com</span>
+                    <span className="text-sm text-gray-700">support@avantra.in</span>
                   </div>
                 </CardContent>
               </Card>
