@@ -6,18 +6,31 @@ A complete, production-ready multipage website for Avantra Chemicals Pvt Ltd, a 
 ## Tech Stack
 - **Frontend**: React, Tailwind CSS
 - **Backend**: FastAPI (Python)
-- **Database**: MongoDB
+- **Database**: MySQL (via SQLAlchemy)
 - **Styling**: Custom CSS matching inera.ag design
 
-## Core Requirements
-1. **Design**: Premium dark aesthetic matching inera.ag (90% identical feel)
-2. **Multilingual**: English, Telugu, Kannada, Hindi support
-3. **Admin Panel**: Comprehensive content management
-4. **Product Pages**: With downloadable manuals and leaflets
+## Domain
+- Production: https://avantra.co
 
 ---
 
 ## What's Been Implemented
+
+### cPanel Deployment Package (December 2025)
+- [x] Converted from MongoDB to **MySQL** database
+- [x] Created **Web-based Installation Wizard** at `/api/install`
+- [x] Created `passenger_wsgi.py` for cPanel Python App
+- [x] Created `.htaccess` for Apache routing
+- [x] Created `build_cpanel.sh` build script
+- [x] Created `CPANEL_INSTALL.md` documentation
+- [x] Generated `avantra_cpanel_deploy.zip` deployment package
+
+### Installation Wizard Features
+- Site URL configuration
+- MySQL database connection (host, port, name, user, password)
+- Admin password setup
+- Automatic table creation
+- Config file generation
 
 ### Design System (December 2025)
 - [x] Complete CSS redesign matching inera.ag style
@@ -30,11 +43,11 @@ A complete, production-ready multipage website for Avantra Chemicals Pvt Ltd, a 
 - [x] Technology section (black background, numbered cards)
 
 ### Homepage
-- [x] Full-screen hero slider with auto-rotation (5 slides)
+- [x] Full-screen hero slider with auto-rotation
 - [x] Navigation arrows and pagination dots
-- [x] Product category cards linking to filtered products
+- [x] Product category cards
 - [x] Stats: 12K+ Farmers, 50+ Dealers, 15+ Products, 10+ States
-- [x] Phytocode Technology section (3 numbered features)
+- [x] Phytocode Technology section
 - [x] Featured Products grid
 - [x] CTA section
 
@@ -42,133 +55,126 @@ A complete, production-ready multipage website for Avantra Chemicals Pvt Ltd, a 
 - [x] Dark hero header
 - [x] Sticky filter bar with category tabs
 - [x] 4-column product grid
-- [x] Category filtering (All, Biostimulants, Biofertilizers, Liquid Fertilizers, Micronutrients, Water Soluble)
-- [x] Product cards with image, brand, name, category, description
+- [x] Category filtering
 
 ### Product Detail Page
 - [x] Dark green gradient hero section
-- [x] Brand name with trademark symbol
-- [x] Product name, category badge, description
-- [x] Product image with drop shadow
-- [x] **Download Product Manual** button (if URL set)
-- [x] **Download Leaflet** button (if URL set)
+- [x] Download Product Manual button
+- [x] Download Leaflet button
 - [x] Benefits/Advantages list
 - [x] How It Works numbered steps
-- [x] Composition table (black header)
-- [x] Growth Stages sidebar card
-- [x] Dosage/Application sidebar card
-- [x] Contact CTA sidebar card
+- [x] Composition table
+- [x] Sidebar cards (Growth Stages, Dosage, Contact CTA)
 - [x] Related Products section
 
 ### Admin Panel
-- [x] Secure login (password: avantra2024)
-- [x] Products management with **5 tabs**:
-  - Basic (name, slug, category, brand, image, tagline, overview, dosage, crops)
-  - Composition (component|specification format)
-  - Details (how it works, growth stages)
-  - Advantages (key benefits list)
-  - **Downloads** (manual_url, leaflet_url)
+- [x] Secure login
+- [x] Products management with 5 tabs (Basic, Composition, Details, Advantages, Downloads)
 - [x] Gallery management
 - [x] Blog/Media management
 - [x] Video Testimonials management
 - [x] Jobs management
-- [x] Applications management
 - [x] Contact submissions
 - [x] Dealer applications
-- [x] Site Settings (logo, social links)
+- [x] Site Settings
 
 ### Other Pages
-- [x] About Page (dark hero, mission, stats, technology, values, R&D)
-- [x] Contact Page (dark hero, contact info, form)
-- [x] Dealers Page (dark hero, dealer search, application form)
-- [x] Gallery Page (dark hero, image grid, lightbox)
-- [x] Media Center (dark hero, blog posts)
-- [x] Careers Page (dark hero, why join us, job listings)
+- [x] About Page
+- [x] Contact Page
+- [x] Dealers Page
+- [x] Gallery Page
+- [x] Media Center
+- [x] Careers Page
 - [x] Privacy Policy Page
 - [x] Terms & Conditions Page
 
-### Navigation & Footer
-- [x] Transparent navbar (turns solid on scroll)
-- [x] Links: About, Products, Gallery, Media, Dealers, Contact
-- [x] Language switcher (EN, TE, KN, HI)
-- [x] Mobile menu
-- [x] Black footer with logo, description, quick links, contact info, social icons, legal links
-
 ---
 
-## API Endpoints
-
-### Public
-- `GET /api/` - Health check
-- `GET /api/stats` - Site statistics
-- `GET /api/settings` - Site settings
-- `GET /api/products` - List products (with category filter)
-- `GET /api/products/{slug}` - Product detail
-- `POST /api/contact` - Submit contact form
-- `POST /api/dealers/apply` - Submit dealer application
-- `GET /api/gallery` - Gallery images
-- `GET /api/blog` - Blog posts
-- `GET /api/jobs` - Job listings
-- `GET /api/testimonials/videos` - Video testimonials
-
-### Admin (requires token)
-- `POST /api/admin/login` - Authentication
-- `PUT /api/settings` - Update settings
-- All CRUD for products, gallery, blog, jobs, videos
-
----
-
-## Database Schema
+## Database Schema (MySQL)
 
 ### products
+```sql
+CREATE TABLE products (
+    id VARCHAR(36) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    brand VARCHAR(100),
+    image_url TEXT,
+    tagline JSON,
+    overview JSON,
+    composition JSON,
+    how_it_works JSON,
+    growth_stages JSON,
+    dosage JSON,
+    advantages JSON,
+    crops TEXT,
+    manual_url TEXT,
+    leaflet_url TEXT,
+    featured BOOLEAN DEFAULT FALSE,
+    created_at DATETIME
+);
 ```
-{
-  id: string,
-  name: string,
-  slug: string,
-  category: string,
-  brand: string,
-  image_url: string,
-  tagline: { en, te, kn, hi },
-  overview: { en, te, kn, hi },
-  composition: [{ component, specification }],
-  how_it_works: { en: [], te: [], kn: [], hi: [] },
-  growth_stages: { en: [], te: [], kn: [], hi: [] },
-  dosage: { en, te, kn, hi },
-  advantages: { en: [], te: [], kn: [], hi: [] },
-  crops: string,
-  manual_url: string,  // NEW
-  leaflet_url: string, // NEW
-  featured: boolean
-}
-```
+
+### Other Tables
+- `contacts`, `dealers`, `gallery`, `blog_posts`, `video_testimonials`, `jobs`, `job_applications`, `site_settings`
 
 ---
 
-## Remaining/Future Tasks
+## cPanel Installation
+
+1. Create MySQL database in cPanel
+2. Setup Python App (3.9+) in cPanel
+3. Upload `backend/` files to Python app root
+4. Upload `frontend/` files to public_html
+5. Install pip requirements
+6. Visit `/api/install` to run installation wizard
+7. Enter database credentials and admin password
+8. Click "Install Avantra Chemicals"
+
+See `CPANEL_INSTALL.md` for detailed instructions.
+
+---
+
+## Files
+
+### Deployment Package
+- `/app/avantra_cpanel_deploy.zip` - Ready to deploy
+
+### Key Backend Files
+- `server.py` - FastAPI application
+- `models.py` - SQLAlchemy models
+- `passenger_wsgi.py` - cPanel entry point
+- `requirements.txt` - Python dependencies
+
+### Configuration Files (Created by Installer)
+- `config.json` - Database credentials and settings
+- `.installed` - Installation flag
+
+---
+
+## Future Tasks
 
 ### P1 - High Priority
-- [ ] SEO Optimization (meta tags, structured data, alt tags)
-- [ ] Populate manual_url and leaflet_url for existing products via admin
+- [ ] Add seed data for initial products
+- [ ] SEO Optimization
 
 ### P2 - Medium Priority
 - [ ] Add real product images
 - [ ] Add real testimonial videos
-- [ ] Add real blog content
-- [ ] Add real job postings
+- [ ] Email notifications for contact forms
 
 ### P3 - Low Priority
-- [ ] Accessibility review (WCAG compliance)
+- [ ] Accessibility review
 - [ ] Performance optimization
-- [ ] Image compression
-- [ ] Refactor AdminPage.js into smaller components
 
 ---
 
 ## Test Status
-- Backend: 100% (25/25 tests passed)
-- Frontend: 100% (all features working)
-- Last tested: December 2025
+- Backend: Converted to MySQL with SQLAlchemy
+- Installation Wizard: Working at `/api/install`
+- Build Script: Creates valid deployment package
 
-## Credentials
-- Admin Password: `avantra2024`
+## Admin Access
+- URL: `https://avantra.co/admin`
+- Password: Set during installation
