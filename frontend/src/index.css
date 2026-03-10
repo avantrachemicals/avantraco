@@ -1,50 +1,62 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --black: #000000;
+  --white: #ffffff;
+  --green-primary: #00A651;
+  --green-light: #7ed957;
+  --gray-dark: #1a1a1a;
+  --gray-medium: #333333;
+  --gray-light: #666666;
+  --gray-lighter: #999999;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: 'Inter', 'Noto Sans Devanagari', 'Noto Sans Telugu', 'Noto Sans Kannada', sans-serif;
+  font-family: 'Montserrat', 'Noto Sans Devanagari', 'Noto Sans Telugu', 'Noto Sans Kannada', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
-  color: #1a1a1a;
-  background: #ffffff;
+  color: var(--black);
+  background: var(--white);
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Inter', 'Noto Sans Devanagari', 'Noto Sans Telugu', 'Noto Sans Kannada', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
-
+/* Shadcn UI Overrides */
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
+    --foreground: 0 0% 0%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 0 0% 0%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
-    --primary: 0 0% 8%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 0% 0%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 120 40% 45%;
+    --secondary: 145 63% 32%;
     --secondary-foreground: 0 0% 100%;
-    --accent: 0 85% 50%;
-    --accent-foreground: 0 0% 100%;
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 40%;
+    --accent: 145 63% 32%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 50%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 0 0% 8%;
-    --radius: 0.75rem;
+    --ring: 0 0% 0%;
+    --radius: 0px;
   }
 }
 
@@ -53,283 +65,909 @@ code {
   body { @apply bg-background text-foreground; }
 }
 
-/* Premium Dark Hero */
-.hero-dark {
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0d3d2a 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-dark::before {
-  content: '';
-  position: absolute;
+/* ================================
+   NAVBAR - INERA STYLE
+   ================================ */
+.navbar-inera {
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: radial-gradient(ellipse at 80% 50%, rgba(34, 197, 94, 0.1) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-/* Glass morphism navbar */
-.navbar-dark {
-  background: rgba(10, 10, 10, 0.95);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.navbar-light {
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-/* Product card hover effect */
-.product-card-premium {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.product-card-premium:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
-  border-color: rgba(34, 197, 94, 0.3);
-}
-
-.product-card-premium:hover .product-image-wrapper {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-}
-
-/* Section backgrounds */
-.section-dark {
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0d3d2a 100%);
-  color: white;
-}
-
-.section-dark-green {
-  background: linear-gradient(135deg, #0d3d2a 0%, #064e3b 50%, #0a3726 100%);
-  color: white;
-}
-
-.section-light-green {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-}
-
-/* Text gradients */
-.text-gradient-green {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Buttons */
-.btn-dark {
-  background: #0a0a0a;
-  color: white;
-  border-radius: 50px;
-  padding: 0.875rem 2rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.btn-dark:hover {
-  background: #1a1a1a;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.btn-green {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  color: white;
-  border-radius: 50px;
-  padding: 0.875rem 2rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.btn-green:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
-}
-
-.btn-outline-light {
-  background: transparent;
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50px;
-  padding: 0.875rem 2rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.btn-outline-light:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
-}
-
-/* Animations */
-@keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(50px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-.animate-fade-in-up {
-  animation: fade-in-up 0.8s ease-out forwards;
-}
-
-.animate-slide-in-right {
-  animation: slide-in-right 0.8s ease-out forwards;
-}
-
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
-.animation-delay-100 { animation-delay: 100ms; }
-.animation-delay-200 { animation-delay: 200ms; }
-.animation-delay-300 { animation-delay: 300ms; }
-.animation-delay-400 { animation-delay: 400ms; }
-
-/* Stat counter */
-.stat-number {
-  font-size: 3.5rem;
-  font-weight: 800;
-  line-height: 1;
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Testimonial slider */
-.testimonial-card {
-  background: white;
-  border-radius: 1.5rem;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.testimonial-card:hover {
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-}
-
-/* Product detail page */
-.product-hero-bg {
-  background: linear-gradient(135deg, #0d3d2a 0%, #064e3b 50%, #0a3726 100%);
-  position: relative;
-}
-
-.product-hero-bg::before {
-  content: '';
-  position: absolute;
-  top: 0; right: 0; bottom: 0; left: 50%;
-  background: radial-gradient(circle at 30% 50%, rgba(34, 197, 94, 0.15) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-/* Composition table */
-.composition-table {
-  border-radius: 1rem;
-  overflow: hidden;
-  border: 1px solid #e5e7eb;
-}
-
-.composition-table th {
-  background: #0a0a0a;
-  color: white;
-  font-weight: 600;
-  padding: 1rem 1.5rem;
-  text-align: left;
-}
-
-.composition-table td {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.composition-table tr:last-child td {
-  border-bottom: none;
-}
-
-.composition-table tr:nth-child(even) {
-  background: #fafafa;
-}
-
-/* Download buttons */
-.download-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 50px;
-  padding: 0.75rem 1.5rem;
-  font-weight: 500;
-  color: #1a1a1a;
-  transition: all 0.3s ease;
-}
-
-.download-btn:hover {
-  border-color: #22c55e;
-  background: #f0fdf4;
-  color: #16a34a;
-}
-
-/* Footer dark */
-.footer-premium {
-  background: #0a0a0a;
-  color: white;
-}
-
-.footer-dark {
-  background: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
-}
-
-/* Category badges */
-.badge-biostimulant { background: linear-gradient(135deg, #22c55e, #16a34a); }
-.badge-biofertilizer { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-.badge-liquid_fertilizer { background: linear-gradient(135deg, #f97316, #ea580c); }
-.badge-micronutrient { background: linear-gradient(135deg, #ef4444, #dc2626); }
-.badge-water_soluble { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-
-/* Responsive image container */
-.aspect-product {
-  aspect-ratio: 1;
+  z-index: 1000;
+  padding: 0 60px;
+  height: 80px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
 }
 
-/* Slider styles */
-.hero-slider {
+.navbar-inera.transparent {
+  background: transparent;
+}
+
+.navbar-inera.scrolled {
+  background: var(--black);
+}
+
+.navbar-logo {
+  height: 40px;
+  width: auto;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.navbar-link {
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.navbar-link:hover {
+  opacity: 0.7;
+}
+
+.navbar-link.active {
+  opacity: 0.7;
+}
+
+/* ================================
+   HERO SLIDER - INERA STYLE
+   ================================ */
+.hero-slider-container {
   position: relative;
-  height: 90vh;
+  width: 100%;
+  height: 100vh;
   min-height: 600px;
-  max-height: 900px;
+  overflow: hidden;
+  background: var(--black);
 }
 
 .hero-slide {
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 1s ease-in-out;
+  transition: opacity 1.5s ease-in-out;
 }
 
 .hero-slide.active {
   opacity: 1;
+}
+
+.hero-slide-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-slide-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);
+}
+
+.hero-slide-content {
+  position: absolute;
+  left: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  max-width: 800px;
+}
+
+.hero-title {
+  font-size: 72px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.hero-subtitle {
+  font-size: 72px;
+  font-weight: 700;
+  color: var(--green-primary);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.hero-pagination {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 20;
+}
+
+.hero-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hero-dot.active {
+  background: var(--green-primary);
+  width: 30px;
+  border-radius: 6px;
+}
+
+/* ================================
+   SECTION STYLES
+   ================================ */
+.section-white {
+  background: var(--white);
+  padding: 100px 60px;
+}
+
+.section-black {
+  background: var(--black);
+  padding: 100px 60px;
+}
+
+.section-gray {
+  background: #f5f5f5;
+  padding: 100px 60px;
+}
+
+.section-title-small {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green-primary);
+  margin-bottom: 20px;
+}
+
+.section-title-large {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--black);
+  margin: 0 0 30px 0;
+  line-height: 1.2;
+}
+
+.section-title-large.white {
+  color: var(--white);
+}
+
+/* ================================
+   PRODUCT CARDS - INERA STYLE
+   ================================ */
+.product-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.product-category-card {
+  background: var(--black);
+  border-radius: 0;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.product-category-card:hover {
+  transform: translateY(-5px);
+}
+
+.product-category-card img {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 180px;
+  max-width: 140px;
+  object-fit: contain;
+}
+
+.product-category-brand {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 5px;
+}
+
+.product-category-name {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+
+.product-category-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.5;
+}
+
+.product-category-arrow {
+  margin-top: auto;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+/* ================================
+   PRODUCTS PAGE - INERA STYLE
+   ================================ */
+.products-hero {
+  background: var(--black);
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.products-hero-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.3;
+}
+
+.products-hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.products-hero-content {
+  position: relative;
+  z-index: 10;
+  padding: 120px 60px 60px;
+}
+
+.products-hero-title {
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--white);
+  margin: 0;
+}
+
+.products-filter-bar {
+  background: var(--white);
+  padding: 20px 60px;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 80px;
+  z-index: 100;
+}
+
+.products-filter-tabs {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.products-filter-tab {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 10px 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.products-filter-tab:hover,
+.products-filter-tab.active {
+  color: var(--black);
+}
+
+.products-filter-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--green-primary);
+}
+
+/* Product Grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  background: var(--white);
+}
+
+.product-card-inera {
+  border: 1px solid #eee;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.product-card-inera:hover {
+  background: #f9f9f9;
+}
+
+.product-card-image {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.product-card-image img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.product-card-inera:hover .product-card-image img {
+  transform: scale(1.05);
+}
+
+.product-card-brand {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-lighter);
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.product-card-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 10px;
+}
+
+.product-card-subtitle {
+  font-size: 14px;
+  color: var(--gray-light);
+  margin-bottom: 15px;
+}
+
+.product-card-desc {
+  font-size: 13px;
+  color: var(--gray-lighter);
+  line-height: 1.6;
+  flex-grow: 1;
+}
+
+.product-card-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 12px;
+  background: #f0f0f0;
+  color: var(--gray-light);
+  margin-top: 15px;
+}
+
+/* ================================
+   PRODUCT DETAIL PAGE - INERA STYLE
+   ================================ */
+.product-detail-hero {
+  background: linear-gradient(135deg, #1a472a 0%, #0d2818 100%);
+  min-height: 70vh;
+  padding: 120px 60px 60px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.product-detail-info {
+  color: var(--white);
+}
+
+.product-detail-brand {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--green-light);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+}
+
+.product-detail-name {
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--white);
+  margin: 0 0 15px 0;
+  line-height: 1.1;
+}
+
+.product-detail-category {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.1);
+  color: var(--white);
+  margin-bottom: 25px;
+}
+
+.product-detail-desc {
+  font-size: 16px;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 30px;
+}
+
+.product-detail-actions {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.btn-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 25px;
+  background: var(--white);
+  color: var(--black);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-download:hover {
+  background: var(--green-primary);
+  color: var(--white);
+}
+
+.product-detail-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-detail-image {
+  max-height: 400px;
+  max-width: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+}
+
+/* Product Detail Content */
+.product-detail-content {
+  padding: 80px 60px;
+  background: var(--white);
+}
+
+.product-detail-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 60px;
+}
+
+.product-section {
+  margin-bottom: 50px;
+}
+
+.product-section-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.product-section-icon {
+  width: 40px;
+  height: 40px;
+  background: #f5f5f5;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Benefits List */
+.benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 20px;
+  background: #f9f9f9;
+}
+
+.benefit-check {
+  width: 24px;
+  height: 24px;
+  background: var(--green-primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.benefit-text {
+  font-size: 15px;
+  color: var(--gray-dark);
+  line-height: 1.6;
+}
+
+/* Composition Table */
+.composition-table-inera {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.composition-table-inera th {
+  background: var(--black);
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 15px 20px;
+  text-align: left;
+}
+
+.composition-table-inera td {
+  padding: 15px 20px;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.composition-table-inera tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+/* Sidebar Cards */
+.sidebar-card {
+  background: #f5f5f5;
+  padding: 30px;
+  margin-bottom: 20px;
+}
+
+.sidebar-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-tag {
+  display: inline-block;
+  padding: 10px 15px;
+  background: var(--white);
+  font-size: 13px;
+  color: var(--gray-dark);
+  margin: 5px;
+}
+
+.sidebar-card-cta {
+  background: linear-gradient(135deg, #1a472a 0%, #0d2818 100%);
+  padding: 30px;
+  color: var(--white);
+}
+
+.sidebar-card-cta h4 {
+  font-size: 18px;
+  margin: 0 0 15px 0;
+}
+
+.sidebar-card-cta p {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+
+.btn-contact {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background: var(--white);
+  color: var(--black);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-contact:hover {
+  background: var(--green-primary);
+  color: var(--white);
+}
+
+/* ================================
+   TESTIMONIALS - INERA STYLE
+   ================================ */
+.testimonials-section {
+  background: var(--black);
+  padding: 100px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.testimonial-slide {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 500px;
+}
+
+.testimonial-image {
+  position: relative;
+}
+
+.testimonial-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.testimonial-content {
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.testimonial-quote {
+  font-size: 22px;
+  line-height: 1.8;
+  color: var(--white);
+  margin-bottom: 30px;
+}
+
+.testimonial-author {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--white);
+}
+
+.testimonial-location {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+}
+
+/* ================================
+   STATS SECTION - INERA STYLE
+   ================================ */
+.stats-section {
+  background: var(--white);
+  padding: 80px 60px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  text-align: center;
+}
+
+.stat-item {
+  padding: 20px;
+}
+
+.stat-number {
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--green-primary);
+  line-height: 1;
+}
+
+.stat-number span {
+  font-size: 36px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--gray-light);
+  margin-top: 10px;
+}
+
+/* ================================
+   FOOTER - INERA STYLE
+   ================================ */
+.footer-inera {
+  background: var(--black);
+  padding: 80px 60px 40px;
+  color: var(--white);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 60px;
+}
+
+.footer-brand p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.8;
+  margin-top: 20px;
+}
+
+.footer-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 25px;
+  letter-spacing: 1px;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.footer-link {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: var(--white);
+}
+
+.footer-bottom {
+  padding-top: 40px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-copyright {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+}
+
+.footer-legal {
+  display: flex;
+  gap: 30px;
+}
+
+.footer-legal a {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+}
+
+.footer-legal a:hover {
+  color: var(--white);
+}
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+@media (max-width: 1200px) {
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .navbar-inera {
+    padding: 0 30px;
+  }
+  
+  .section-white,
+  .section-black,
+  .section-gray {
+    padding: 60px 30px;
+  }
+  
+  .hero-title,
+  .hero-subtitle {
+    font-size: 48px;
+  }
+  
+  .hero-slide-content {
+    left: 30px;
+  }
+  
+  .product-detail-hero {
+    grid-template-columns: 1fr;
+    padding: 120px 30px 60px;
+  }
+  
+  .product-detail-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-links {
+    display: none;
+  }
+  
+  .hero-title,
+  .hero-subtitle {
+    font-size: 36px;
+  }
+  
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .product-category-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .testimonial-slide {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Animation Classes */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Debug wrapper fix */

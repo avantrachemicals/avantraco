@@ -25,12 +25,13 @@ export const translations = {
       howItWorksDesc: "Phytocode employs nano-encapsulation and bio-matrix chelation to lock nutrients in a protective lattice. Upon application, plant enzymes trigger timed release—fostering root vigor, bloom retention, and fruit quality without overload."
     },
     stats: {
-      dealers: "Dealerships",
-      farmers: "Farmers Served",
-      acres: "Acres Covered",
-      licenses: "Licensed Products",
-      team: "Team Members",
-      products: "Product Range"
+      dealers: "50",
+      farmers: "12K",
+      acres: "100K",
+      licenses: "25",
+      team: "100",
+      products: "15",
+      states: "10"
     },
     products: {
       title: "Our Products",

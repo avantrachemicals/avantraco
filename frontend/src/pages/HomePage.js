@@ -3,295 +3,324 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useLanguage, getLocalizedText } from "@/context/LanguageContext";
 import { translations } from "@/data/translations";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Sprout, Users, MapPin, Award, ChevronLeft, ChevronRight, Play, Quote } from "lucide-react";
+import { ArrowRight, Sprout, Leaf, FlaskConical, Shield, ChevronLeft, ChevronRight } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
+// Hero Slides with farming/agriculture theme images
 const HERO_SLIDES = [
-  { title: "Nourishing Crops", subtitle: "that Nourish the World", image: "https://images.unsplash.com/photo-1724531281596-cfae90d5a082?w=1920&q=80" },
-  { title: "Boosting Soil Fertility", subtitle: "with High-Efficacy Biofertilisers", image: "https://images.unsplash.com/photo-1680726040280-8968cddc571b?w=1920&q=80" },
-  { title: "Enhancing Crop Growth", subtitle: "With Power-Packed Biostimulants", image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=1920&q=80" },
+  {
+    image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1920&q=80",
+    titleTop: "Nourishing Crops",
+    titleBottom: "that nourish India"
+  },
+  {
+    image: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1920&q=80",
+    titleTop: "Boosting Soil Fertility",
+    titleBottom: "with Bio-Stimulants"
+  },
+  {
+    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&q=80",
+    titleTop: "Enhancing Crop Growth",
+    titleBottom: "with Advanced Technology"
+  },
+  {
+    image: "https://images.unsplash.com/photo-1560493676-04071c5f467b?w=1920&q=80",
+    titleTop: "Improving Yield Quality",
+    titleBottom: "with Natural Solutions"
+  }
 ];
 
-const CATEGORY_ICONS = {
-  biostimulant: "🌱",
-  biofertilizer: "🌾",
-  liquid_fertilizer: "💧",
-  micronutrient: "⚡",
-  water_soluble: "🔬"
-};
+// Product Categories
+const PRODUCT_CATEGORIES = [
+  {
+    brand: "TRUMAGIC",
+    name: "Biostimulants",
+    desc: "High-performing plant growth enhancers",
+    link: "/products?category=biostimulant",
+    icon: Sprout
+  },
+  {
+    brand: "NUTRIGOLD",
+    name: "Biofertilizers",
+    desc: "Power-packed soil nutrition solutions",
+    link: "/products?category=biofertilizer",
+    icon: Leaf
+  },
+  {
+    brand: "GROMAX",
+    name: "Micronutrients",
+    desc: "Essential mineral supplements for crops",
+    link: "/products?category=micronutrient",
+    icon: FlaskConical
+  },
+  {
+    brand: "CROPSHIELD",
+    name: "Liquid Fertilizers",
+    desc: "Fast-acting foliar nutrition",
+    link: "/products?category=liquid_fertilizer",
+    icon: Shield
+  }
+];
 
 export default function HomePage() {
   const { language } = useLanguage();
-  const t = translations[language] || translations.en;
-  const [products, setProducts] = useState([]);
-  const [settings, setSettings] = useState({});
-  const [videoTestimonials, setVideoTestimonials] = useState([]);
+  const t = translations[language]?.home || translations.en.home;
+  const stats = translations[language]?.stats || translations.en.stats;
+  
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [stats, setStats] = useState({});
+  const [products, setProducts] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
+  const [settings, setSettings] = useState({});
 
   useEffect(() => {
-    axios.get(`${API}/products`).then(r => setProducts(r.data)).catch(() => {});
-    axios.get(`${API}/settings`).then(r => setSettings(r.data)).catch(() => {});
-    axios.get(`${API}/testimonials/videos?featured_only=true`).then(r => setVideoTestimonials(r.data)).catch(() => {});
-    axios.get(`${API}/stats`).then(r => setStats(r.data)).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % HERO_SLIDES.length);
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 5000);
-    return () => clearInterval(timer);
+    return () => clearInterval(interval);
   }, []);
 
-  const featuredProducts = products.filter(p => p.featured).slice(0, 4);
-  const productsByCategory = products.reduce((acc, p) => {
-    acc[p.category] = acc[p.category] || [];
-    acc[p.category].push(p);
-    return acc;
-  }, {});
+  useEffect(() => {
+    axios.get(`${API}/products?featured=true`).then(r => setProducts(r.data.slice(0, 4))).catch(() => {});
+    axios.get(`${API}/videos`).then(r => setTestimonials(r.data)).catch(() => {});
+    axios.get(`${API}/settings`).then(r => setSettings(r.data)).catch(() => {});
+  }, []);
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
 
   return (
-    <div data-testid="home-page" className="bg-white">
-      {/* Hero Slider - Dark premium style */}
-      <section className="hero-dark min-h-[90vh] flex items-center relative" data-testid="hero-section">
-        {HERO_SLIDES.map((slide, idx) => (
-          <div key={idx} className={`absolute inset-0 transition-opacity duration-1000 ${currentSlide === idx ? 'opacity-100' : 'opacity-0'}`}>
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-10" />
-            <img src={slide.image} alt="" className="w-full h-full object-cover" />
+    <div data-testid="home-page">
+      {/* Hero Slider - Inera Style */}
+      <section className="hero-slider-container" data-testid="hero-slider">
+        {HERO_SLIDES.map((slide, index) => (
+          <div key={index} className={`hero-slide ${index === currentSlide ? 'active' : ''}`}>
+            <img 
+              src={slide.image} 
+              alt={slide.titleTop} 
+              className="hero-slide-image"
+            />
+            <div className="hero-slide-overlay" />
+            <div className="hero-slide-content">
+              <h1 className="hero-title">{slide.titleTop}</h1>
+              <h1 className="hero-subtitle">{slide.titleBottom}</h1>
+            </div>
           </div>
         ))}
         
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="max-w-3xl">
-            <div className="text-green-400 text-sm font-semibold tracking-wider uppercase mb-4 animate-fade-in-up">
-              Phytocode™ Technology
-            </div>
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-2 leading-tight animate-fade-in-up animation-delay-100">
-              {HERO_SLIDES[currentSlide].title}
-            </h1>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-green-400 mb-8 animate-fade-in-up animation-delay-200">
-              {HERO_SLIDES[currentSlide].subtitle}
-            </h2>
-            <div className="flex flex-wrap gap-4 animate-fade-in-up animation-delay-300">
-              <Link to="/products">
-                <Button className="btn-green text-base px-8 py-6">
-                  Explore Products <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link to="/about">
-                <Button className="btn-outline-light text-base px-8 py-6">
-                  Learn More
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Slide indicators */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-          {HERO_SLIDES.map((_, idx) => (
+        {/* Navigation Arrows */}
+        <button 
+          onClick={prevSlide}
+          className="absolute left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft className="w-6 h-6 text-white" />
+        </button>
+        <button 
+          onClick={nextSlide}
+          className="absolute right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors"
+          aria-label="Next slide"
+        >
+          <ChevronRight className="w-6 h-6 text-white" />
+        </button>
+        
+        {/* Pagination Dots */}
+        <div className="hero-pagination">
+          {HERO_SLIDES.map((_, index) => (
             <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className={`w-3 h-3 rounded-full transition-all ${currentSlide === idx ? 'bg-green-400 w-8' : 'bg-white/30 hover:bg-white/50'}`}
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`hero-dot ${index === currentSlide ? 'active' : ''}`}
+              aria-label={`Go to slide ${index + 1}`}
             />
           ))}
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-            {[
-              { value: "70+", label: "Dealerships", icon: Users },
-              { value: "12K+", label: "Farmers Served", icon: Sprout },
-              { value: "30K+", label: "Acres Covered", icon: MapPin },
-              { value: "64", label: "Licensed Products", icon: Award }
-            ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="stat-number mb-2">{stat.value}</div>
-                <div className="text-gray-500 font-medium">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Products Section - Premium Cards */}
-      <section className="py-24 bg-gray-50" data-testid="products-section">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="text-green-600 font-semibold text-sm tracking-wider uppercase mb-4">Our Products</div>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              Breakthrough Biological Farm Inputs
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              We help farmers enhance the health and quality of the produce through our revolutionary 100% bioabled agri inputs built using our deep understanding of biology.
-            </p>
-          </div>
-
-          {/* Category Cards */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            {Object.entries(productsByCategory).slice(0, 4).map(([category, prods]) => (
-              <Link to={`/products?category=${category}`} key={category}>
-                <Card className="product-card-premium h-full bg-white rounded-2xl overflow-hidden group cursor-pointer">
-                  <div className="product-image-wrapper p-8 bg-gray-50 transition-all duration-300">
-                    <div className="text-6xl mb-4">{CATEGORY_ICONS[category]}</div>
-                    <div className="text-xs font-bold tracking-wider text-gray-400 uppercase mb-2">
-                      {t.products[category] || category.replace("_", " ")}
-                    </div>
-                    <div className="text-lg font-bold text-gray-900">
-                      {prods.length} Products
-                    </div>
+      {/* Products Section - Inera Style */}
+      <section className="section-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="section-title-small">Our Products</div>
+          
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
+            {/* Left Content */}
+            <div>
+              <h2 className="section-title-large">
+                Breakthrough Biological Farm Inputs
+              </h2>
+              <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                At Avantra Chemicals, we are on a bold mission to restore the golden balance between nature and science.
+              </p>
+              <p className="text-gray-600 leading-relaxed mb-8">
+                We help farmers enhance the health and quality of their produce through our revolutionary 100% bio-enabled agri inputs built using our deep understanding of biology.
+              </p>
+              <p className="text-gray-600 leading-relaxed">
+                We make progressive, sustainable agriculture universal. On every acre across India.
+              </p>
+            </div>
+            
+            {/* Right - Product Category Cards */}
+            <div className="product-category-grid">
+              {PRODUCT_CATEGORIES.map((cat, index) => (
+                <Link 
+                  key={index} 
+                  to={cat.link}
+                  className="product-category-card group"
+                  data-testid={`category-card-${index}`}
+                >
+                  <div className="product-category-brand">{cat.brand}<sup>™</sup></div>
+                  <div className="product-category-name">{cat.name}</div>
+                  <div className="product-category-desc">{cat.desc}</div>
+                  <div className="product-category-arrow">
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                   </div>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-600">Explore</span>
-                      <ArrowRight className="h-5 w-5 text-green-500 group-hover:translate-x-2 transition-transform" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-
-          {/* Featured Products */}
-          {featuredProducts.length > 0 && (
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map(product => (
-                <Link to={`/products/${product.slug}`} key={product.id} data-testid={`product-card-${product.slug}`}>
-                  <Card className="product-card-premium h-full bg-white rounded-2xl overflow-hidden group">
-                    <div className="product-image-wrapper aspect-square bg-gray-50 flex items-center justify-center p-8 transition-all">
-                      {product.image_url ? (
-                        <img src={product.image_url} alt={product.name} className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300" />
-                      ) : (
-                        <Sprout className="h-20 w-20 text-green-300" />
-                      )}
-                    </div>
-                    <CardContent className="p-6">
-                      <Badge className={`badge-${product.category} text-white text-xs mb-3`}>
-                        {t.products[product.category] || product.category}
-                      </Badge>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{product.name}</h3>
-                      <p className="text-sm text-gray-500 line-clamp-2 mb-4">{getLocalizedText(product.tagline, language)}</p>
-                      <div className="flex items-center text-green-600 font-medium text-sm group-hover:gap-2 transition-all">
-                        View Details <ArrowRight className="h-4 w-4 ml-1" />
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <cat.icon className="absolute right-6 top-1/2 -translate-y-1/2 w-20 h-20 text-white/10" />
                 </Link>
               ))}
             </div>
-          )}
-
-          <div className="text-center mt-12">
-            <Link to="/products">
-              <Button className="btn-dark text-base px-10 py-6">
-                View All Products <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
 
-      {/* Technology Section */}
-      <section className="py-24 section-dark-green" data-testid="technology-section">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <div className="text-green-400 font-semibold text-sm tracking-wider uppercase mb-4">Our Technologies</div>
-              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-8">
-                Feed the plant when they need it
-              </h2>
-              <div className="space-y-6">
-                {[
-                  { num: "01", title: "Nutrient Delivery", desc: "Our proprietary Phytocode™ technology uses enzyme activators for effective nutrient uptake." },
-                  { num: "02", title: "Stress Protection", desc: "Enhances plants' defence mechanisms while maintaining nutrient uptake during stress." },
-                  { num: "03", title: "Extended Stability", desc: "Special regenerative complexes improve stability & shelf life for 2-3x longer effectiveness." }
-                ].map((item, i) => (
-                  <div key={i} className="flex gap-6 items-start">
-                    <div className="text-4xl font-bold text-green-400/30">{item.num}</div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                      <p className="text-gray-300">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
+      {/* Stats Section - Inera Style */}
+      <section className="stats-section border-t border-b">
+        <div className="max-w-7xl mx-auto">
+          <div className="stats-grid">
+            <div className="stat-item">
+              <div className="stat-number">{stats.farmers}<span>+</span></div>
+              <div className="stat-label">Farmers Served</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">{stats.dealers}<span>+</span></div>
+              <div className="stat-label">Authorized Dealers</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">{stats.products}<span>+</span></div>
+              <div className="stat-label">Bio Products</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">{stats.states}<span>+</span></div>
+              <div className="stat-label">States Covered</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products - Grid Style */}
+      {products.length > 0 && (
+        <section className="section-gray">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex justify-between items-center mb-12">
+              <div>
+                <div className="section-title-small">Featured Products</div>
+                <h2 className="section-title-large mb-0">Our Best Sellers</h2>
               </div>
-              <Link to="/about" className="mt-8 inline-block">
-                <Button className="btn-green text-base px-8 py-6">
-                  Learn About Phytocode™ <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
+              <Link 
+                to="/products" 
+                className="flex items-center gap-2 text-sm font-semibold text-black hover:text-green-600 transition-colors"
+              >
+                View All Products
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="relative">
-              <img
-                src={settings.phytocode_image || "https://images.pexels.com/photos/8851401/pexels-photo-8851401.jpeg?auto=compress&w=800"}
-                alt="Phytocode Technology"
-                className="rounded-3xl shadow-2xl w-full"
-              />
-              <div className="absolute -bottom-8 -left-8 bg-white rounded-2xl p-6 shadow-xl">
-                <div className="text-3xl font-bold text-green-600">20-30%</div>
-                <div className="text-sm text-gray-500">Better Nutrient Uptake</div>
-              </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-0">
+              {products.map((product) => (
+                <Link 
+                  key={product.id}
+                  to={`/products/${product.slug}`}
+                  className="product-card-inera"
+                  data-testid={`featured-product-${product.slug}`}
+                >
+                  <div className="product-card-image">
+                    {product.image_url ? (
+                      <img src={product.image_url} alt={product.name} />
+                    ) : (
+                      <Sprout className="w-20 h-20 text-gray-300" />
+                    )}
+                  </div>
+                  <div className="product-card-brand">AVANTRA</div>
+                  <div className="product-card-name">{product.name}</div>
+                  <div className="product-card-desc">
+                    {getLocalizedText(product.tagline, language)}
+                  </div>
+                  <div className="product-card-tag">
+                    {product.category?.replace("_", " ")}
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Testimonials */}
-      <section className="py-24 bg-white" data-testid="testimonials-section">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="text-green-600 font-semibold text-sm tracking-wider uppercase mb-4">Hear From Our Growers</div>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900">
-              Success Stories
-            </h2>
-          </div>
+      {/* Technology Section */}
+      <section className="section-black">
+        <div className="max-w-7xl mx-auto">
+          <div className="section-title-small">Our Technology</div>
+          <h2 className="section-title-large white mb-12">
+            Phytocode Technology
+          </h2>
+          
           <div className="grid md:grid-cols-3 gap-8">
-            {t.testimonials.items.map((item, i) => (
-              <Card key={i} className="testimonial-card">
-                <Quote className="h-10 w-10 text-green-200 mb-4" />
-                <p className="text-gray-600 leading-relaxed mb-6">"{item.quote}"</p>
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold">
-                    {item.name.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="font-bold text-gray-900">{item.name}</div>
-                    <div className="text-sm text-gray-500">{item.crop} | {item.location}</div>
-                  </div>
-                </div>
-              </Card>
+            {[
+              {
+                num: "01",
+                title: "Feed the plant when they need it",
+                desc: "Our proprietary technologies use enzyme activators to ensure effective nutrient uptake and delivery when plants need it the most."
+              },
+              {
+                num: "02",
+                title: "Protect plants from stressors",
+                desc: "In cases of biotic & abiotic stress, our technologies enhance plants' defence mechanisms while maintaining nutrient uptake."
+              },
+              {
+                num: "03",
+                title: "Make products last longer",
+                desc: "Our technologies employ special regenerative complexes that improve stability & shelf life, reducing the required number of applications."
+              }
+            ].map((item, index) => (
+              <div key={index} className="border border-white/20 p-8">
+                <div className="text-green-500 text-5xl font-bold mb-6">{item.num}</div>
+                <h3 className="text-white text-xl font-semibold mb-4">{item.title}</h3>
+                <p className="text-white/60 leading-relaxed">{item.desc}</p>
+              </div>
             ))}
+          </div>
+          
+          <div className="mt-12 text-center">
+            <Link 
+              to="/about" 
+              className="inline-flex items-center gap-2 text-white hover:text-green-500 transition-colors font-medium"
+            >
+              Learn More About Our Technology
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 hero-dark" data-testid="cta-section">
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+      <section className="section-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="section-title-large mb-6">
             Ready to Transform Your Farm?
           </h2>
-          <p className="text-xl text-gray-300 mb-10">
-            Join thousands of farmers who trust Avantra Chemicals for premium crop nutrition solutions.
+          <p className="text-gray-600 text-lg mb-10">
+            Join thousands of farmers who have already improved their crop yield and quality with Avantra's bio-solutions.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/contact">
-              <Button className="btn-green text-base px-10 py-6">
-                Contact Us
-              </Button>
+          <div className="flex justify-center gap-4 flex-wrap">
+            <Link 
+              to="/products"
+              className="px-8 py-4 bg-black text-white font-semibold hover:bg-green-600 transition-colors"
+            >
+              Explore Products
             </Link>
-            <Link to="/dealers">
-              <Button className="btn-outline-light text-base px-10 py-6">
-                Become a Dealer
-              </Button>
+            <Link 
+              to="/contact"
+              className="px-8 py-4 border-2 border-black text-black font-semibold hover:bg-black hover:text-white transition-colors"
+            >
+              Contact Us
             </Link>
           </div>
         </div>

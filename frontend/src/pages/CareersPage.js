@@ -3,9 +3,6 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useLanguage } from "@/context/LanguageContext";
 import { translations } from "@/data/translations";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Briefcase, MapPin, Clock, ChevronRight, Users, Sprout, Award } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -13,7 +10,6 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 export default function CareersPage() {
   const { language } = useLanguage();
   const t = translations[language]?.careers || translations.en.careers;
-  const stats = translations[language]?.stats || translations.en.stats;
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,112 +20,146 @@ export default function CareersPage() {
   }, []);
 
   return (
-    <div data-testid="careers-page" className="bg-white">
-      {/* Hero - Dark Premium Style */}
-      <section className="product-hero-bg min-h-[50vh] relative flex items-center">
-        <div className="absolute inset-0 opacity-20">
+    <div data-testid="careers-page">
+      {/* Hero Section - Inera Style */}
+      <section className="products-hero">
+        <div className="products-hero-bg">
           <img 
             src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1920&q=80" 
-            alt="" 
-            className="w-full h-full object-cover"
+            alt=""
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0d3d2a] via-[#0d3d2a]/90 to-transparent" />
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pt-32">
-          <Badge className="bg-green-400/20 text-green-300 border-green-400/30 mb-6 text-sm font-semibold px-4 py-1">
-            We're Hiring
-          </Badge>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6" data-testid="careers-title">
-            {t.title}
+        <div className="products-hero-content">
+          <h1 className="products-hero-title" data-testid="careers-title">
+            {t.title || "Careers"}
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl">
-            {t.subtitle}
-          </p>
         </div>
       </section>
 
       {/* Why Join Us */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="section-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="section-title-small">Why Join Us</div>
+            <h2 className="section-title-large">Build Your Career at Avantra</h2>
+          </div>
+          
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { icon: Sprout, title: "Impactful Work", desc: "Help 12,000+ farmers grow better crops", color: "bg-[#D9F99D]", iconColor: "text-[#044736]" },
-              { icon: Users, title: "Great Team", desc: "Work with passionate agri-entrepreneurs", color: "bg-blue-100", iconColor: "text-blue-600" },
-              { icon: Award, title: "Growth Opportunity", desc: "Fast-growing company with rapid expansion", color: "bg-orange-100", iconColor: "text-orange-600" }
+              { 
+                icon: Sprout, 
+                title: "Impactful Work", 
+                desc: "Help thousands of farmers grow better crops and improve their livelihoods through innovative bio-solutions." 
+              },
+              { 
+                icon: Users, 
+                title: "Great Team", 
+                desc: "Work with passionate agri-entrepreneurs and scientists who are transforming Indian agriculture." 
+              },
+              { 
+                icon: Award, 
+                title: "Growth Opportunity", 
+                desc: "Join a fast-growing company with rapid expansion plans and excellent career advancement opportunities." 
+              }
             ].map((item, i) => (
-              <Card key={i} className="border-0 shadow-sm rounded-2xl overflow-hidden">
-                <CardContent className="p-8">
-                  <div className={`h-14 w-14 rounded-2xl ${item.color} flex items-center justify-center mb-6`}>
-                    <item.icon className={`h-7 w-7 ${item.iconColor}`} />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                  <p className="text-gray-600">{item.desc}</p>
-                </CardContent>
-              </Card>
+              <div key={i} className="text-center p-8 border border-gray-200 hover:border-black transition-colors">
+                <div className="w-16 h-16 mx-auto mb-6 bg-gray-100 flex items-center justify-center">
+                  <item.icon className="w-8 h-8 text-green-600" />
+                </div>
+                <h3 className="text-xl font-bold text-black mb-3">{item.title}</h3>
+                <p className="text-gray-600">{item.desc}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       {/* Open Positions */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-10">{t.openPositions}</h2>
-          
+      <section className="section-gray">
+        <div className="max-w-7xl mx-auto">
+          <div className="section-title-small">Open Positions</div>
+          <h2 className="section-title-large mb-12">Current Openings</h2>
+
           {loading ? (
-            <div className="text-center py-20 text-gray-400">Loading...</div>
+            <div className="text-center py-10 text-gray-400">Loading...</div>
           ) : jobs.length === 0 ? (
-            <Card className="border-0 shadow-sm rounded-2xl">
-              <CardContent className="p-12 text-center">
-                <Briefcase className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-lg text-gray-500">{t.noJobs}</p>
-              </CardContent>
-            </Card>
+            <div className="text-center py-16 bg-white">
+              <Briefcase className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-black mb-2">No Open Positions</h3>
+              <p className="text-gray-500 mb-6">
+                We don't have any open positions right now, but we're always looking for talented people.
+              </p>
+              <Link 
+                to="/contact"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-semibold hover:bg-green-600 transition-colors"
+              >
+                Send Your Resume
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
           ) : (
             <div className="space-y-4">
               {jobs.map((job) => (
-                <Link to={`/careers/${job.id}`} key={job.id} data-testid={`job-card-${job.id}`}>
-                  <Card className="border-0 shadow-sm rounded-2xl hover:shadow-md transition-all duration-300 group">
-                    <CardContent className="p-6 md:p-8">
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div className="flex-1">
-                          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#044736] transition-colors">
-                            {job.title}
-                          </h3>
-                          <div className="flex flex-wrap gap-4 text-sm text-gray-500">
-                            {job.department && (
-                              <span className="flex items-center gap-1">
-                                <Briefcase className="h-4 w-4" /> {job.department}
-                              </span>
-                            )}
-                            {job.location && (
-                              <span className="flex items-center gap-1">
-                                <MapPin className="h-4 w-4" /> {job.location}
-                              </span>
-                            )}
-                            {job.type && (
-                              <span className="flex items-center gap-1">
-                                <Clock className="h-4 w-4" /> {job.type}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          {job.experience && (
-                            <Badge variant="outline" className="text-xs">{job.experience}</Badge>
-                          )}
-                          <Button className="bg-[#044736] hover:bg-[#033326] text-white rounded-full px-6 group-hover:gap-3 transition-all">
-                            {t.viewDetails} <ChevronRight className="h-4 w-4 ml-1" />
-                          </Button>
-                        </div>
+                <Link 
+                  to={`/careers/${job.id}`}
+                  key={job.id}
+                  className="block bg-white p-6 hover:shadow-lg transition-shadow group"
+                  data-testid={`job-${job.id}`}
+                >
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                      <h3 className="text-xl font-bold text-black group-hover:text-green-600 transition-colors mb-2">
+                        {job.title}
+                      </h3>
+                      <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                        {job.location && (
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-4 h-4" />
+                            {job.location}
+                          </span>
+                        )}
+                        {job.type && (
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            {job.type}
+                          </span>
+                        )}
+                        {job.department && (
+                          <span className="flex items-center gap-1">
+                            <Briefcase className="w-4 h-4" />
+                            {job.department}
+                          </span>
+                        )}
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm font-semibold text-black group-hover:text-green-600 transition-colors">
+                      View Details
+                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
                 </Link>
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="section-black">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            Don't See a Suitable Position?
+          </h2>
+          <p className="text-white/70 text-lg mb-10">
+            We're always looking for talented individuals. Send us your resume and we'll keep you in mind for future opportunities.
+          </p>
+          <Link 
+            to="/contact"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-semibold hover:bg-green-500 hover:text-white transition-colors"
+          >
+            Contact Us
+            <ChevronRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
     </div>
