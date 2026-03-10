@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Header
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Header, UploadFile, File, Form
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -7,8 +7,9 @@ import logging
 import jwt
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 import uuid
+import base64
 from datetime import datetime, timezone, timedelta
 
 ROOT_DIR = Path(__file__).parent
@@ -20,6 +21,10 @@ db = client[os.environ['DB_NAME']]
 
 ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD', 'avantra2024')
 JWT_SECRET = os.environ.get('JWT_SECRET', 'avantra-jwt-secret-2024')
+
+# File storage directory
+UPLOAD_DIR = Path("/app/uploads")
+UPLOAD_DIR.mkdir(exist_ok=True)
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -60,6 +65,43 @@ class DealerAppCreate(BaseModel):
 
 class AdminLogin(BaseModel):
     password: str
+
+
+# --- Site Settings Model ---
+class SiteSettingsUpdate(BaseModel):
+    hero_image: Optional[str] = None
+    logo_url: Optional[str] = None
+    about_image: Optional[str] = None
+    phytocode_image: Optional[str] = None
+    social_links: Optional[Dict[str, str]] = None
+
+
+# --- Job Model ---
+class JobCreate(BaseModel):
+    title: str
+    department: str = ""
+    location: str = ""
+    type: str = "Full-time"  # Full-time, Part-time, Contract
+    experience: str = ""
+    description: str = ""
+    requirements: List[str] = []
+    responsibilities: List[str] = []
+    salary_range: str = ""
+    is_active: bool = True
+
+
+# --- Job Application Model ---
+class JobApplicationCreate(BaseModel):
+    job_id: str
+    name: str
+    email: str
+    phone: str
+    address: str = ""
+    current_company: str = ""
+    current_ctc: str = ""
+    photo_base64: Optional[str] = None
+    resume_base64: Optional[str] = None
+    payslip_base64: Optional[str] = None
 
 
 # --- Auth ---
@@ -171,14 +213,134 @@ async def list_dealer_apps(_=Depends(verify_admin)):
 @api_router.get("/stats")
 async def get_stats():
     product_count = await db.products.count_documents({})
+    job_count = await db.jobs.count_documents({"is_active": True})
     return {
         "products": product_count,
         "dealers": 70,
         "farmers_served": 12000,
         "acres_covered": 30000,
         "team_members": 18,
-        "licenses": 64
+        "licenses": 64,
+        "open_positions": job_count
     }
+
+
+# --- Site Settings ---
+DEFAULT_SETTINGS = {
+    "hero_image": "https://images.unsplash.com/photo-1757031298556-c0c5c4b01e64?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODh8MHwxfHNlYXJjaHwyfHxyb3clMjBjcm9wcyUyMGFncmljdWx0dXJlJTIwZmllbGQlMjBncmVlbnxlbnwwfHx8fDE3NzMxNDQ1NjR8MA&ixlib=rb-4.1.0&q=85",
+    "logo_url": "",
+    "about_image": "https://images.unsplash.com/photo-1595956481935-a9e254951d49?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBmYXJtZXIlMjBpbiUyMGZpZWxkJTIwc21pbGluZ3xlbnwwfHx8fDE3NzMxNDQ1MTl8MA&ixlib=rb-4.1.0&q=85",
+    "phytocode_image": "https://images.unsplash.com/photo-1720202194910-75fd3bc2b820?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwxfHxwbGFudCUyMHRpc3N1ZSUyMGN1bHR1cmUlMjB0ZXN0JTIwdHViZSUyMGxhYm9yYXRvcnklMjBzY2llbmNlfGVufDB8fHx8MTc3MzE0NDQ1MTJ8MA&ixlib=rb-4.1.0&q=85",
+    "social_links": {
+        "youtube": "",
+        "twitter": "",
+        "instagram": "",
+        "facebook": "",
+        "linkedin": ""
+    }
+}
+
+
+@api_router.get("/settings")
+async def get_settings():
+    settings = await db.settings.find_one({"type": "site"}, {"_id": 0})
+    if not settings:
+        return DEFAULT_SETTINGS
+    return {**DEFAULT_SETTINGS, **settings}
+
+
+@api_router.put("/settings")
+async def update_settings(data: SiteSettingsUpdate, _=Depends(verify_admin)):
+    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
+    update_data["type"] = "site"
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.settings.update_one({"type": "site"}, {"$set": update_data}, upsert=True)
+    return await get_settings()
+
+
+# --- Jobs ---
+@api_router.get("/jobs")
+async def list_jobs(active_only: bool = True):
+    query = {"is_active": True} if active_only else {}
+    jobs = await db.jobs.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return jobs
+
+
+@api_router.get("/jobs/{job_id}")
+async def get_job(job_id: str):
+    job = await db.jobs.find_one({"id": job_id}, {"_id": 0})
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return job
+
+
+@api_router.post("/jobs")
+async def create_job(data: JobCreate, _=Depends(verify_admin)):
+    doc = data.model_dump()
+    doc["id"] = str(uuid.uuid4())
+    doc["created_at"] = datetime.now(timezone.utc).isoformat()
+    doc["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.jobs.insert_one(doc)
+    return {k: v for k, v in doc.items() if k != "_id"}
+
+
+@api_router.put("/jobs/{job_id}")
+async def update_job(job_id: str, data: JobCreate, _=Depends(verify_admin)):
+    update_data = data.model_dump()
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    result = await db.jobs.update_one({"id": job_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return await db.jobs.find_one({"id": job_id}, {"_id": 0})
+
+
+@api_router.delete("/jobs/{job_id}")
+async def delete_job(job_id: str, _=Depends(verify_admin)):
+    result = await db.jobs.delete_one({"id": job_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return {"message": "Job deleted"}
+
+
+# --- Job Applications ---
+@api_router.post("/jobs/apply")
+async def submit_job_application(data: JobApplicationCreate):
+    doc = data.model_dump()
+    doc["id"] = str(uuid.uuid4())
+    doc["status"] = "pending"
+    doc["created_at"] = datetime.now(timezone.utc).isoformat()
+    
+    # Get job title for reference
+    job = await db.jobs.find_one({"id": data.job_id}, {"title": 1})
+    doc["job_title"] = job.get("title", "Unknown") if job else "Unknown"
+    
+    await db.job_applications.insert_one(doc)
+    return {"id": doc["id"], "message": "Application submitted successfully"}
+
+
+@api_router.get("/jobs/applications/list")
+async def list_job_applications(_=Depends(verify_admin)):
+    apps = await db.job_applications.find({}, {"_id": 0, "photo_base64": 0, "resume_base64": 0, "payslip_base64": 0}).sort("created_at", -1).to_list(1000)
+    return apps
+
+
+@api_router.get("/jobs/applications/{app_id}")
+async def get_job_application(app_id: str, _=Depends(verify_admin)):
+    app = await db.job_applications.find_one({"id": app_id}, {"_id": 0})
+    if not app:
+        raise HTTPException(status_code=404, detail="Application not found")
+    return app
+
+
+@api_router.put("/jobs/applications/{app_id}/status")
+async def update_application_status(app_id: str, status: str, _=Depends(verify_admin)):
+    result = await db.job_applications.update_one(
+        {"id": app_id}, 
+        {"$set": {"status": status, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Application not found")
+    return {"message": f"Status updated to {status}"}
 
 
 # --- Seed ---

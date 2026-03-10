@@ -1,6 +1,6 @@
 export const translations = {
   en: {
-    nav: { home: "Home", about: "About", products: "Products", dealers: "Dealers", contact: "Contact" },
+    nav: { home: "Home", about: "About", products: "Products", dealers: "Dealers", contact: "Contact", careers: "Careers" },
     hero: {
       tagline: "Chemistry that Cultivates",
       subtitle: "Innovative biostimulants and fertilizers for thriving farms across India",
@@ -11,6 +11,18 @@ export const translations = {
       title: "Pioneering Agricultural Innovation",
       description: "Founded in 2024, Avantra Chemicals is revolutionizing Indian agriculture with Phytocode technology - stabilizing multiple nutrients in one formulation for longer viability and slow nutrient release.",
       phytocode: "Phytocode Technology"
+    },
+    phytocode: {
+      title: "Phytocode Technology",
+      intro: "Avantra Chemicals has pioneered Phytocode™ technology, a breakthrough innovation that masterfully integrates and stabilizes multiple essential nutrients within a single, advanced formulation.",
+      benefit1Title: "Nutrient Synergy",
+      benefit1Desc: "Encapsulates diverse macros, micros, and biostimulants without degradation, ensuring 2-3x longer stability.",
+      benefit2Title: "Prolonged Efficacy",
+      benefit2Desc: "Formulations remain potent for extended periods, reducing application frequency and waste.",
+      benefit3Title: "Plant-Optimized Release",
+      benefit3Desc: "Gradually meters nutrients at cellular level, minimizing leaching, boosting uptake by 20-30%, and enhancing stress resilience.",
+      howItWorksTitle: "How It Works",
+      howItWorksDesc: "Phytocode employs nano-encapsulation and bio-matrix chelation to lock nutrients in a protective lattice. Upon application, plant enzymes trigger timed release—fostering root vigor, bloom retention, and fruit quality without overload."
     },
     stats: {
       dealers: "Dealerships",
@@ -94,6 +106,34 @@ export const translations = {
       corporate: "Corporate Office",
       factory: "Factory"
     },
+    careers: {
+      title: "Join Our Team",
+      subtitle: "Build the future of Indian agriculture with us",
+      openPositions: "Open Positions",
+      noJobs: "No open positions at the moment. Check back soon!",
+      applyNow: "Apply Now",
+      viewDetails: "View Details",
+      department: "Department",
+      location: "Location",
+      type: "Type",
+      experience: "Experience",
+      description: "Job Description",
+      requirements: "Requirements",
+      responsibilities: "Responsibilities",
+      applicationForm: "Application Form",
+      fullName: "Full Name",
+      email: "Email Address",
+      phone: "Mobile Number",
+      address: "Address",
+      currentCompany: "Current Company",
+      currentCTC: "Current CTC",
+      photo: "Passport Size Photo",
+      resume: "Resume (PDF)",
+      payslip: "Current Payslip (optional)",
+      submit: "Submit Application",
+      success: "Application submitted successfully! We'll get back to you soon.",
+      backToJobs: "Back to Careers"
+    },
     testimonials: {
       title: "What Farmers Say",
       items: [
@@ -109,7 +149,10 @@ export const translations = {
       contactInfo: "Contact Info",
       followUs: "Follow Us",
       copyright: "2026 Avantra Chemicals Pvt Ltd. All rights reserved.",
-      tagline: "Grow . Thrive . Yield"
+      tagline: "Grow . Thrive . Yield",
+      terms: "Terms & Conditions",
+      privacy: "Privacy Policy",
+      corporate: "Corporate Info"
     },
     common: { learnMore: "Learn More", submit: "Submit", loading: "Loading...", success: "Success!", error: "Something went wrong", search: "Search products..." }
   },

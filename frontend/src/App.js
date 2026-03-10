@@ -11,6 +11,11 @@ import ProductDetailPage from "@/pages/ProductDetailPage";
 import DealersPage from "@/pages/DealersPage";
 import ContactPage from "@/pages/ContactPage";
 import AdminPage from "@/pages/AdminPage";
+import CareersPage from "@/pages/CareersPage";
+import JobDetailPage from "@/pages/JobDetailPage";
+import TermsPage from "@/pages/TermsPage";
+import PrivacyPage from "@/pages/PrivacyPage";
+import CorporatePage from "@/pages/CorporatePage";
 
 function App() {
   return (
@@ -26,6 +31,11 @@ function App() {
               <Route path="/products/:slug" element={<ProductDetailPage />} />
               <Route path="/dealers" element={<DealersPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/careers" element={<CareersPage />} />
+              <Route path="/careers/:jobId" element={<JobDetailPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/corporate" element={<CorporatePage />} />
               <Route path="/admin" element={<AdminPage />} />
             </Routes>
           </main>
