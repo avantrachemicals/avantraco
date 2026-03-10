@@ -1,28 +1,18 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { useLanguage } from "@/context/LanguageContext";
-import { translations } from "@/data/translations";
+import { useContent, getText } from "@/context/ContentContext";
 import { Facebook, Twitter, Instagram, Linkedin, Youtube, MapPin, Phone, Mail } from "lucide-react";
-
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function Footer() {
   const { language } = useLanguage();
-  const t = translations[language]?.footer || translations.en.footer;
-  const nav = translations[language]?.nav || translations.en.nav;
-  const [settings, setSettings] = useState({});
-
-  useEffect(() => {
-    axios.get(`${API}/settings`).then(r => setSettings(r.data)).catch(() => {});
-  }, []);
+  const { settings, labels } = useContent();
 
   const quickLinks = [
-    { href: "/", label: "Home" },
-    { href: "/about", label: nav.about || "About" },
-    { href: "/products", label: nav.products || "Products" },
-    { href: "/dealers", label: nav.dealers || "Dealers" },
-    { href: "/contact", label: nav.contact || "Contact" },
+    { href: "/", label: getText(labels['nav.home'], language, "Home") },
+    { href: "/about", label: getText(labels['nav.about'], language, "About") },
+    { href: "/products", label: getText(labels['nav.products'], language, "Products") },
+    { href: "/dealers", label: getText(labels['nav.dealers'], language, "Dealers") },
+    { href: "/contact", label: getText(labels['nav.contact'], language, "Contact") },
   ];
 
   const productLinks = [
@@ -117,7 +107,7 @@ export default function Footer() {
               <div className="flex items-start gap-3 text-white/60 text-sm">
                 <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5" />
                 <span>
-                  {settings.address || "Avantra Chemicals Pvt Ltd, Hyderabad, Telangana, India"}
+                  {getText(settings.address, language, "Avantra Chemicals Pvt Ltd, Hyderabad, Telangana, India")}
                 </span>
               </div>
               <a href="tel:+919876543210" className="flex items-center gap-3 footer-link">
@@ -138,8 +128,8 @@ export default function Footer() {
             © {new Date().getFullYear()} Avantra Chemicals Pvt Ltd. All rights reserved.
           </div>
           <div className="footer-legal">
-            <Link to="/privacy-policy">Privacy Policy</Link>
-            <Link to="/terms-and-conditions">Terms & Conditions</Link>
+            <Link to="/privacy">Privacy Policy</Link>
+            <Link to="/terms">Terms & Conditions</Link>
           </div>
         </div>
       </div>

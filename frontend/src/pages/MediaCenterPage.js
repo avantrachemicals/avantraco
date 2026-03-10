@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useLanguage } from "@/context/LanguageContext";
+import { useContent, getText } from "@/context/ContentContext";
 import { Calendar, ArrowRight, Newspaper } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function MediaCenterPage() {
+  const { language } = useLanguage();
+  const { pages } = useContent();
+  const pageContent = pages['media']?.content || {};
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +37,7 @@ export default function MediaCenterPage() {
           />
         </div>
         <div className="products-hero-content">
-          <h1 className="products-hero-title">Media Center</h1>
+          <h1 className="products-hero-title">{getText(pageContent.hero_title, language, "Media Center")}</h1>
         </div>
       </section>
 

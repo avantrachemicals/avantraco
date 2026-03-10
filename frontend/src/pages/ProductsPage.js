@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { useLanguage, getLocalizedText } from "@/context/LanguageContext";
-import { translations } from "@/data/translations";
+import { useLanguage } from "@/context/LanguageContext";
+import { useContent, getText } from "@/context/ContentContext";
 import { Sprout } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -18,7 +18,8 @@ const CATEGORIES = [
 
 export default function ProductsPage() {
   const { language } = useLanguage();
-  const t = translations[language]?.products || translations.en.products;
+  const { pages, categories: dbCategories } = useContent();
+  const pageContent = pages['products']?.content || {};
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "all");
@@ -54,7 +55,7 @@ export default function ProductsPage() {
         </div>
         <div className="products-hero-content">
           <h1 className="products-hero-title" data-testid="products-title">
-            {t.title || "Our Products"}
+            {getText(pageContent.hero_title, language, "Our Products")}
           </h1>
         </div>
       </section>
@@ -69,7 +70,7 @@ export default function ProductsPage() {
               className={`products-filter-tab ${activeCategory === cat.key ? 'active' : ''}`}
               data-testid={`filter-${cat.key}`}
             >
-              {t[cat.key] || cat.label}
+              {cat.key === 'all' ? getText(pageContent.filter_all, language, 'All Products') : cat.label}
             </button>
           ))}
         </div>
@@ -95,20 +96,20 @@ export default function ProductsPage() {
               >
                 <div className="product-card-image">
                   {product.image_url ? (
-                    <img src={product.image_url} alt={product.name} />
+                    <img src={product.image_url} alt={getText(product.name, language)} />
                   ) : (
                     <Sprout className="w-20 h-20 text-gray-200" />
                   )}
                 </div>
                 <div className="product-card-brand">
-                  {product.brand || "AVANTRA"}
+                  {getText(product.brand, language, "AVANTRA")}
                 </div>
-                <div className="product-card-name">{product.name}</div>
+                <div className="product-card-name">{getText(product.name, language)}</div>
                 <div className="product-card-subtitle">
                   {CATEGORIES.find(c => c.key === product.category)?.label || product.category?.replace("_", " ")}
                 </div>
                 <div className="product-card-desc">
-                  {getLocalizedText(product.tagline, language)}
+                  {getText(product.tagline, language)}
                 </div>
               </Link>
             ))}

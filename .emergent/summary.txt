@@ -1,77 +1,279 @@
 <analysis>**original_problem_statement:**
-Build a complete, production-ready multipage website for Avantra Chemicals Pvt Ltd, a leading manufacturer of biostimulants and agricultural products. The user has requested a full-stack application with a comprehensive admin panel to manage all site content.
+The user wants to build a complete, production-ready multipage website for Avantra Chemicals Pvt Ltd. The initial request was for a React/FastAPI/MongoDB stack with a comprehensive admin panel. The project has since evolved through several major user requests:
+1.  A complete visual overhaul to be 90-100% identical to the  website, featuring a premium dark theme.
+2.  A migration from MongoDB to MySQL to make the application easily deployable on a cPanel server, including a web-based installation wizard.
+3.  A massive expansion of scope to turn the entire website into a fully editable and translatable CMS. Every piece of text, image, and button, along with SEO metadata for each page, must be manageable through the admin panel and support English, Hindi, Telugu, and Kannada.
 
 **PRODUCT REQUIREMENTS:**
--   **Core Functionality:** A multipage website showcasing products, company information, a dealer network, and contact details.
--   **Admin Panel:** A robust admin panel to manage:
-    -   Products (including detailed, multilingual fields like composition, how it works, advantages, targeted growth stages, product manuals, and leaflets).
-    -   Site-wide settings (logo, hero images, social media links).
-    -   A Careers page with job postings and an application submission form (including resume and photo uploads).
-    -   A Gallery page.
-    -   A Media Center with blog posts.
-    -   A Video Testimonials section.
--   **Design:** The user's latest request is for a major redesign to make the website 90% identical to , featuring a dark, premium, and modern aesthetic.
--   **Multilingual Support:** The site must support English, Telugu, Kannada, and Hindi.
--   **Tech Stack:** React (Frontend), FastAPI (Backend), MongoDB (Database).
+-   **Core Functionality:** A multipage website showcasing products, company information, etc., with all content being dynamically loaded from a database.
+-   **Technology:** React (Frontend), FastAPI (Backend), MySQL (Database).
+-   **Deployment:** Must be deployable on cPanel via a generated zip package and a web-based installation wizard.
+-   **Admin Panel:** A robust admin panel to manage every single piece of content on the website, including all text, images, page structures, SEO metadata, and translations for all supported languages.
+-   **Design:** A premium, dark, modern aesthetic that is nearly identical to .
+-   **Multilingual:** Full-site translation capabilities for English, Hindi, Telugu, and Kannada, managed via the admin panel.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application with a React frontend and FastAPI backend. The application features a comprehensive admin panel for managing products, jobs, applications, gallery images, blog posts, video testimonials, and site-wide settings. Multiple pages have been created (Home, About, Products, Careers, Gallery, Media, etc.). The agent has started a major redesign to mimic the  website, updating the backend models and beginning to rewrite the frontend CSS and key components like the Navbar and Homepage. The application is currently in an inconsistent visual state due to the half-finished redesign.
+The application is a full-stack React/FastAPI project that has been migrated from MongoDB to MySQL. A cPanel deployment package () and a web-based installation wizard () have been created.
+
+The most recent work was a massive refactoring to convert the site into a full CMS. This involved creating extensive SQLAlchemy models () and API endpoints () for every content element. On the frontend, a new  was created to fetch and manage this dynamic content, and key pages like  began their conversion to this new system.
+
+However, the application is currently **broken** in the preview environment. It shows a blank screen because it requires a connection to a MySQL database that is not configured. An attempt to implement a static data fallback for testing purposes has failed.
 
 **Last working item**:
--   Last item agent was working: The agent was in the middle of a major redesign inspired by the  website. It had just updated the backend  model to include  and , updated the CSS with a new dark theme, and started rewriting the  and  components.
+-   Last item agent was working: The agent was attempting to fix the broken preview environment by implementing a fallback mechanism. The goal was to serve static default content from  when the database is not installed, allowing the frontend to render for development. This fix was not successful.
 -   Status: IN PROGRESS
 -   Agent Testing Done: N
 -   Which testing method agent to use? both
 -   User Testing Done: N
 
 **All Pending/In progress Issue list**:
--   Issue 1: Incomplete Major Redesign (P0)
+-   Issue 1: Application Not Rendering in Preview Environment (P0)
 
 Issues Detail:
--   **Issue 1: Incomplete Major Redesign**
-    -   **Attempted fixes:** The agent started the redesign by updating backend models ( model to include  and ), overwriting global CSS () with a new dark theme, and rewriting the  and . However, the work is incomplete.
+-   **Issue 1: Application Not Rendering in Preview Environment**
+    -   **Attempted fixes:** The agent created a  function in  to serve static data if the database is not configured. This was meant to allow the frontend to render. However, the application still shows a blank screen, indicating the fallback is not working correctly.
     -   **Next debug checklist:**
-        1.  Complete the redesign of  and .
-        2.  Redesign  to match the layout of , including adding Download Product Manual and Leaflet buttons that use the new backend fields.
-        3.  Update the product editing form in  to allow admins to add/edit the  and  for each product.
-        4.  Apply the new dark, premium theme consistently across all other pages (, , , , etc.) to resolve the visual inconsistencies.
-        5.  Verify the entire site is responsive with the new design.
-    -   **Why fix this issue and what will be achieved with the fix?** The website's UI is currently broken and inconsistent. Completing the redesign will deliver the user's primary request for a new look-and-feel and make the site visually coherent and functional again.
+        1.  Check backend logs (==> /var/log/supervisor/backend.err.log <==
+INFO:     Application shutdown complete.
+INFO:     Finished server process [666]
+INFO:     Started server process [917]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'server.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [917]
+INFO:     Started server process [948]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [948]
+INFO:     Stopping reloader process [664]
+INFO:     Will watch for changes in these directories: ['/app/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Started reloader process [953] using WatchFiles
+INFO:     Started server process [955]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [955]
+INFO:     Stopping reloader process [953]
+INFO:     Will watch for changes in these directories: ['/app/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Started reloader process [1131] using WatchFiles
+INFO:     Started server process [1133]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'server.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1133]
+INFO:     Started server process [1304]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'server.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1304]
+INFO:     Started server process [1320]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'server.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1320]
+INFO:     Started server process [1336]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'server.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1336]
+INFO:     Started server process [1352]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'server.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1352]
+INFO:     Started server process [1368]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'server.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1368]
+INFO:     Started server process [1384]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [1384]
+INFO:     Stopping reloader process [1131]
+INFO:     Will watch for changes in these directories: ['/app/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Started reloader process [1389] using WatchFiles
+INFO:     Started server process [1391]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Will watch for changes in these directories: ['/app/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     Started reloader process [42] using WatchFiles
+INFO:     Started server process [72]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+
+==> /var/log/supervisor/backend.out.log <==
+INFO:     10.208.138.66:52606 - "GET /api/pages HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:52618 - "GET /api/labels HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:52584 - "GET /api/categories HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46152 - "GET /api/videos HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46160 - "GET /api/products?featured=true HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46160 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:52584 - "GET /api/pages HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46152 - "GET /api/labels HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:52584 - "GET /api/categories HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46152 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46152 - "GET /api/labels HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:52584 - "GET /api/pages HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46160 - "GET /api/categories HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46152 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46160 - "GET /api/pages HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46152 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:52584 - "GET /api/categories HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:52584 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46152 - "GET /api/labels HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46152 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:52584 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46152 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:52584 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:52584 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46152 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46152 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:52584 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42716 - "GET /api/videos HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:44190 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:44204 - "GET /api/products?featured=true HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42716 - "GET /api/products?featured=true HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:44204 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42716 - "GET /api/videos HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42716 - "GET /api/pages HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42716 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:44204 - "GET /api/labels HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:44190 - "GET /api/products?featured=true HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42730 - "GET /api/categories HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42730 - "GET /api/videos HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:44190 - "GET /api/pages HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:44190 - "GET /api/labels HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42730 - "GET /api/categories HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42730 - "GET /api/products?featured=true HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:44204 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:44208 - "GET /api/videos HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42730 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42730 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:44204 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:44204 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42730 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:44204 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42730 - "GET /api/products?featured=true HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42730 - "GET /api/products?featured=true HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:48246 - "GET /api/contact HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42730 - "GET /api/jobs?active_only=false HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:33712 - "GET /api/products HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:42730 - "GET /api/dealers/applications HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:48246 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:33724 - "GET /api/jobs/applications/list HTTP/1.1" 404 Not Found
+INFO:     10.208.138.71:33712 - "GET /api/gallery HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:48254 - "GET /api/pages HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:33740 - "GET /api/categories HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:33724 - "GET /api/testimonials/videos HTTP/1.1" 404 Not Found
+INFO:     10.208.138.66:48246 - "GET /api/labels HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:33740 - "GET /api/blog?published_only=false HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:33740 - "GET /api/contact HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:33740 - "GET /api/pages HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:48246 - "GET /api/jobs/applications/list HTTP/1.1" 404 Not Found
+INFO:     10.208.138.71:33746 - "GET /api/products HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:33746 - "GET /api/categories HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:48246 - "GET /api/jobs?active_only=false HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:33752 - "GET /api/dealers/applications HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:48254 - "GET /api/testimonials/videos HTTP/1.1" 404 Not Found
+INFO:     10.208.138.71:33740 - "GET /api/gallery HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:48246 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:48246 - "GET /api/blog?published_only=false HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:33746 - "GET /api/labels HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:33746 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:33746 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:48246 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:48246 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:46780 - "POST /api/admin/login HTTP/1.1" 401 Unauthorized
+INFO:     10.208.138.71:39088 - "POST /api/admin/login HTTP/1.1" 401 Unauthorized
+INFO:     10.208.138.71:39890 - "POST /api/admin/login HTTP/1.1" 401 Unauthorized
+INFO:     10.208.138.71:46230 - "GET /api/categories HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:47650 - "GET /api/products?featured=true HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:47636 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:47660 - "GET /api/labels HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46230 - "GET /api/pages HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:47636 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46230 - "GET /api/categories HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:47650 - "GET /api/products?featured=true HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46230 - "GET /api/labels HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46234 - "GET /api/pages HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46234 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46234 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.66:47650 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:46234 - "GET /api/settings HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:58772 - "GET /api/pages HTTP/1.1" 503 Service Unavailable
+INFO:     10.208.138.71:40976 - "GET /api/pages HTTP/1.1" 200 OK) for errors in the fallback logic.
+        2.  Use  to test the  endpoint directly. Verify if it returns the expected static JSON data or an error.
+        3.  Inspect  to see how it handles the API response and manages loading/error/data states.
+        4.  Debug  and other components to ensure they can correctly render with the data structure provided by the fallback.
+    -   **Why fix this issue and what will be achieved with the fix?** This is a critical blocker. The application is un-testable and further development is impossible until the frontend can be rendered in the preview environment.
     -   **Status:** IN PROGRESS
     -   **Is recurring issue?** N
     -   **Should Test frontend/backend/both after fix?** both
-    -   **Blocked on other issue:** None
+    -   **Blocked on other issue:** None. This issue blocks all other tasks.
 
 **In progress Task List**:
--   **Task 1: Complete the  Inspired Redesign (P0)**
-    -   **Where to resume:** The agent just finished a partial update of . The next step is to continue the redesign, focusing on the , , and , and then extending the new style to all other pages.
-    -   **What will be achieved with this?** The website will have a completely new, dark, premium design consistent with the user's request, and the new product manual/leaflet functionality will be fully implemented.
+-   **Task 1: Complete the Full CMS & Translatability Feature (P0)**
+    -   **Where to resume:** First, resolve **Issue 1**. After the app is rendering, continue the massive refactoring:
+        1.  Convert all remaining frontend pages and components (, , , , , etc.) to fetch their content from the .
+        2.  Completely overhaul  to create a user-friendly interface for managing the vast new set of content models (all pages, components, SEO fields, and translations).
+        3.  Implement the logic to remove the specified product blocks (, etc.) from the homepage content via the new CMS structure.
+    -   **What will be achieved with this?** The site will become a fully dynamic, editable, and translatable CMS, fulfilling the user's latest and most complex request.
     -   **Status:** IN PROGRESS
     -   **Should Test frontend/backend/both after fix?** both
-    -   **Blocked on something:** None
+    -   **Blocked on something:** Blocked by **Issue 1: Application Not Rendering**.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **P0: End-to-End Testing:** After the redesign is complete, run a comprehensive test using  to validate all features, including the new design, product manual downloads, and admin functionalities.
+    -   **P0: Admin Panel Overhaul:** Design and build the new admin interface to manage all dynamic site content.
+    -   **P1: End-to-End CMS Testing:** Once the CMS is feature-complete, conduct thorough testing. Use the admin panel to edit content and translations on every page and verify the changes on the site.
 -   **Future Tasks:**
-    -   **SEO Optimization:** Implement meta tags, structured data (Schema.org), and alt tags.
-    -   **Accessibility Review:** Ensure the new design meets WCAG standards (color contrast, keyboard navigation).
+    -   **P2: cPanel Deployment Validation:** Test and validate the  package and  to ensure a smooth user installation experience.
+    -   **P3: SEO & Accessibility:** Perform a final review to ensure all SEO fields are working and the site meets accessibility standards.
 
 **Completed work in this session**
--   Initial project scaffolding and data seeding.
--   **First Major Redesign:** Implemented a vibrant, light-themed design.
--   **Admin Panel Expansion:**
-    -   Added management for Site Settings (logo, images, social links).
-    -   Added management for Careers (jobs, applications with file uploads).
-    -   Added management for Gallery, Media/Blog, and Video Testimonials.
-    -   Enhanced Product editing with tabs for composition, advantages, etc.
--   **New Pages:** Created Careers, Terms, Privacy, Corporate, Gallery, and Media Center pages.
--   **Content & Bug Fixes:**
-    -   Updated contact information and section images per user request.
-    -   Added a detailed Phytocode Technology section to the About page.
-    -   Fixed a bug where the Phytocode section did not translate correctly.
+-   **Full Redesign (v2):** Executed a deep, accurate redesign of the entire frontend to be 100% identical to the  website.
+-   **Database Migration:** Successfully migrated the backend from MongoDB to MySQL using SQLAlchemy.
+-   **cPanel Deployment Solution:**
+    -   Created a web-based installation wizard.
+    -   Created a cPanel deployment package () with a build script and configuration files (, ).
+    -   Wrote a detailed .
+-   **CMS Scaffolding:** Laid the extensive groundwork for the full CMS, including creating all backend models and API endpoints, and a new frontend data context.
 
 **Earlier issues found/mentioned but not fixed**
 -   None.
@@ -83,77 +285,66 @@ Issues Detail:
 
 
 **Key Technical Concepts**
--   **Backend:** FastAPI
--   **Frontend:** React, React Router
--   **Database:** MongoDB
--   **Styling:** Tailwind CSS (via CDN)
--   **Internationalization (i18n):** React Context API
--   **Authentication:** JWT for Admin Panel
+-   **Backend:** FastAPI, MySQL, SQLAlchemy.
+-   **Frontend:** React, React Router, React Context API, .
+-   **Architecture:** Fully dynamic CMS. All content is fetched from API endpoints that read from a MySQL database.
+-   **Deployment:** Custom cPanel deployment solution with a web-based installer.
 
 **key DB schema**
--   **products:**  (extended)
--   **site_settings:** 
--   **jobs:** 
--   **job_applications:** 
--   **gallery_items:** 
--   **blog_posts:** 
--   **video_testimonials:** 
+-   The complete schema is defined in  using SQLAlchemy. It includes dozens of tables to manage content for every page and component, such as , , , , and .
 
 **changes in tech stack**
--   None.
+-   **Database:** Migrated from MongoDB to MySQL.
 
 **All files of reference**
--   : Being rewritten for the new design.
--   : Needs a major redesign and new download buttons.
--   : Needs updates to the product form.
--   : Contains the new dark theme CSS variables.
--   : Being rewritten for the new design.
--   : Contains all API endpoints, including new ones for the product manual/leaflet fields.
--   : Updated to reflect the new  model.
+-   : The core application logic, including the CMS APIs, installation wizard, and the broken fallback logic.
+-   : Defines the entire database schema for the new CMS.
+-   : The new central data-fetching layer for the frontend.
+-   : The primary page being refactored to use the new CMS system.
+-   : Instructions for the user to deploy on cPanel.
 
 **Areas that need refactoring**:
--   : This file has become excessively large and manages state for many different sections (Products, Jobs, Gallery, Blog, etc.). It should be broken down into smaller, more manageable components for each admin section.
+-   The entire frontend needs to be refactored to use the new  for all content.
+-    requires a complete rebuild to create a UI for the new, highly complex content management system.
 
 **key api endpoints**
--   
--    (Updated to handle  and )
--    for , , 
--    for , 
--    for 
+-   : Serves the HTML for the installation wizard and handles the form submission.
+-   : The new primary endpoint for the frontend to fetch all site content in a single call.
+-   : New endpoints to get/update content for specific pages (e.g., ).
 
 **Critical Info for New Agent**
-You are stepping into the middle of a major, incomplete redesign of the entire application. The primary goal is to make the site look and feel 90% identical to . The frontend is in an inconsistent state, with some components updated to a new dark theme while others retain the old light theme. Your first priority is to complete this redesign across all pages, ensuring a consistent and polished user experience. This involves finishing the , redesigning the  with new download buttons, updating the  to manage the new fields, and then applying the new style to all remaining pages.
+-   **Your first priority is to fix the broken application.** The preview environment shows a blank screen because the app cannot connect to a MySQL database, and the implemented fallback solution is not working. You must debug the fallback mechanism in  and the data consumption in  to make the site render again.
+-   After fixing the rendering blocker, your main task is to complete the massive refactoring into a full CMS. This means updating all remaining frontend components to use the new  and, most importantly, building a completely new Admin Panel UI to manage all the new editable content.
+-   The project has evolved significantly. Refer to the latest user requests for making everything editable and translatable, as this now defines the core architecture.
 
 **documents and test reports created in this job**
 -   
--    (Note: these reports are for the version of the site *before* the current redesign began).
--    (Note: this is from a previous design phase and is now outdated).
+-   
+-   
+-   
+-    (Outdated, from before the MySQL/CMS migration).
 
 **Last 10 User Messages and any pending HUMAN messages**
--   **Message 227:** I want a webiste almost like this https://www.inera.ag/ make this webiste 90% identical...add button like download product manual leaflet and make them all editable under admin panel - **In Progress**. This is the core task the agent is currently working on.
--   **Message 223:** Agent finished updating contact info and images. - Completed.
--   **Message 180:** proceed also add phytocode technology deatils in inner page...when language is changed phtyocode techonogy section is being stagnent - Completed.
--   **Message 153:** User requested updating contact info and section images. - Completed.
--   **Message 104:** User requested adding a logo, Gallery/Media pages, video testimonials, and making product pages fully editable from the admin panel. - Completed.
--   **Message 41:** User requested a major expansion: new vibrant design, several new pages (T&C, Privacy, Careers with application form), and admin controls for jobs and social links. - Completed.
--   **Message 38:** User requested admin controls for hero images/logo, new Phytocode content, and a general design improvement. - Completed.
+-    - **In Progress**. This is the current, highest-priority task.
+-    - **Completed**.
+-    - **Completed**.
+-    - **Completed**.
+-    - **Completed**.
 
 **Project Health Check:**
--   **Broken:** The frontend is in a broken/inconsistent state due to the partial redesign. Some pages have the new dark theme, while others have the old light theme, creating a jarring user experience. The functionality for product manuals/leaflets is implemented in the backend but not connected to the frontend.
+-   **Broken:** The application is non-functional in the preview environment, showing only a blank screen. This is a P0 blocker that must be resolved before any other work can continue.
 
 **3rd Party Integrations**
 -   None.
 
 **Testing status**
--   Testing agent used after significant changes: YES (but for the previous version of the app).
+-   Testing agent used after significant changes: YES, but on a much older version. The reports are no longer relevant.
 -   Troubleshoot agent used after agent stuck in loop: NO
 -   Test files created: []
--   Known regressions: The entire UI is a regression due to the inconsistent state of the redesign.
+-   Known regressions: The entire application is non-functional and does not render in the preview environment.
 
 **Credentials to test flow:**
--   **Admin Login:**
-    -   Username: 
-    -   Password: 
+-   The application is not installed. The admin credentials will be set by the user via the web installation wizard once the application is deployable.
 
 **What agent forgot to execute**
--   The agent did not forget but was in the middle of executing a large, multi-step task. It correctly updated the backend models first but has not yet completed the corresponding frontend implementation for the new product manual/leaflet feature in either the  or the .</analysis>
+-   The agent did not successfully complete the implementation of the static content fallback mechanism, which was a critical step for enabling development and testing in the preview environment. This left the application in a broken, unusable state.</analysis>

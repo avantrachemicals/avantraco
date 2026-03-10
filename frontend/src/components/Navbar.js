@@ -1,17 +1,15 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import axios from "axios";
 import { useLanguage } from "@/context/LanguageContext";
+import { useContent, getText } from "@/context/ContentContext";
 import { Menu, X, Globe, ChevronDown } from "lucide-react";
-
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function Navbar() {
   const location = useLocation();
   const { language, setLanguage, SUPPORTED_LANGS } = useLanguage();
+  const { settings, labels } = useContent();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [settings, setSettings] = useState({});
   const [langMenuOpen, setLangMenuOpen] = useState(false);
 
   const isHomePage = location.pathname === "/";
@@ -20,10 +18,6 @@ export default function Navbar() {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    axios.get(`${API}/settings`).then(r => setSettings(r.data)).catch(() => {});
   }, []);
 
   const navLinks = [

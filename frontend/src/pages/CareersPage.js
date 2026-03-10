@@ -2,14 +2,15 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useLanguage } from "@/context/LanguageContext";
-import { translations } from "@/data/translations";
+import { useContent, getText } from "@/context/ContentContext";
 import { Briefcase, MapPin, Clock, ChevronRight, Users, Sprout, Award } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function CareersPage() {
   const { language } = useLanguage();
-  const t = translations[language]?.careers || translations.en.careers;
+  const { pages } = useContent();
+  const pageContent = pages['careers']?.content || {};
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,7 +32,7 @@ export default function CareersPage() {
         </div>
         <div className="products-hero-content">
           <h1 className="products-hero-title" data-testid="careers-title">
-            {t.title || "Careers"}
+            {getText(pageContent.hero_title, language, "Careers")}
           </h1>
         </div>
       </section>

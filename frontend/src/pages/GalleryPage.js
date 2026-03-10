@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useLanguage } from "@/context/LanguageContext";
+import { useContent, getText } from "@/context/ContentContext";
 import { X } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function GalleryPage() {
+  const { language } = useLanguage();
+  const { pages } = useContent();
+  const pageContent = pages['gallery']?.content || {};
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState(null);
@@ -26,7 +31,7 @@ export default function GalleryPage() {
           />
         </div>
         <div className="products-hero-content">
-          <h1 className="products-hero-title">Gallery</h1>
+          <h1 className="products-hero-title">{getText(pageContent.hero_title, language, "Gallery")}</h1>
         </div>
       </section>
 

@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useLanguage } from "@/context/LanguageContext";
-import { translations } from "@/data/translations";
+import { useContent, getText } from "@/context/ContentContext";
 import { MapPin, Phone, User, Building, Send } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function DealersPage() {
   const { language } = useLanguage();
-  const t = translations[language]?.dealers || translations.en.dealers;
+  const { pages } = useContent();
+  const pageContent = pages['dealers']?.content || {};
   const [dealers, setDealers] = useState([]);
   const [form, setForm] = useState({ name: "", business_name: "", location: "", phone: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
@@ -49,7 +50,7 @@ export default function DealersPage() {
         </div>
         <div className="products-hero-content">
           <h1 className="products-hero-title" data-testid="dealers-title">
-            {t.title || "Dealer Network"}
+            {getText(pageContent.hero_title, language, "Dealer Network")}
           </h1>
         </div>
       </section>
@@ -59,7 +60,7 @@ export default function DealersPage() {
         <div className="max-w-7xl mx-auto">
           <div className="section-title-small">Find a Dealer</div>
           <h2 className="section-title-large mb-8">
-            {t.subtitle || "Our Authorized Dealers"}
+            {getText(pageContent.find_subtitle, language, "Our Authorized Dealers")}
           </h2>
 
           {/* Search */}

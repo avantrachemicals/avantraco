@@ -1,22 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useLanguage } from "@/context/LanguageContext";
-import { translations } from "@/data/translations";
+import { useContent, getText } from "@/context/ContentContext";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function ContactPage() {
   const { language } = useLanguage();
-  const t = translations[language]?.contact || translations.en.contact;
-  const [settings, setSettings] = useState({});
+  const { pages, settings, labels } = useContent();
+  const pageContent = pages['contact']?.content || {};
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-
-  useEffect(() => {
-    axios.get(`${API}/settings`).then(r => setSettings(r.data)).catch(() => {});
-  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,7 +39,7 @@ export default function ContactPage() {
         </div>
         <div className="products-hero-content">
           <h1 className="products-hero-title" data-testid="contact-title">
-            {t.title || "Contact Us"}
+            {getText(pageContent.hero_title, language, "Contact Us")}
           </h1>
         </div>
       </section>
@@ -56,7 +52,7 @@ export default function ContactPage() {
             <div>
               <div className="section-title-small">Get In Touch</div>
               <h2 className="section-title-large">
-                {t.subtitle || "We'd Love to Hear From You"}
+                {getText(pageContent.info_subtitle, language, "We'd Love to Hear From You")}
               </h2>
               <p className="text-gray-600 mb-10">
                 Have questions about our products or want to become a dealer? Reach out to us and our team will get back to you within 24 hours.
@@ -70,7 +66,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold text-black mb-1">Office Address</h3>
                     <p className="text-gray-600">
-                      {settings.address || "Avantra Chemicals Pvt Ltd, Hyderabad, Telangana, India - 500001"}
+                      {getText(settings.address, language, "Avantra Chemicals Pvt Ltd, Hyderabad, Telangana, India - 500001")}
                     </p>
                   </div>
                 </div>
