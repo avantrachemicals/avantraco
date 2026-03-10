@@ -60,7 +60,8 @@ function ProductForm({ product, token, onSave, onClose }) {
     composition: [],
     advantages: { en: [], te: [], kn: [], hi: [] },
     how_it_works: { en: [], te: [], kn: [], hi: [] },
-    growth_stages: { en: [], te: [], kn: [], hi: [] }
+    growth_stages: { en: [], te: [], kn: [], hi: [] },
+    manual_url: "", leaflet_url: "", brand: "", crops: ""
   });
   const [compText, setCompText] = useState((product?.composition || []).map(c => `${c.component}|${c.specification}`).join("\n"));
   const [advText, setAdvText] = useState((product?.advantages?.en || []).join("\n"));
@@ -96,11 +97,12 @@ function ProductForm({ product, token, onSave, onClose }) {
   return (
     <form onSubmit={handleSave} className="space-y-4" data-testid="product-form">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-4 mb-4">
+        <TabsList className="grid grid-cols-5 mb-4">
           <TabsTrigger value="basic">Basic</TabsTrigger>
           <TabsTrigger value="composition">Composition</TabsTrigger>
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="advantages">Advantages</TabsTrigger>
+          <TabsTrigger value="downloads">Downloads</TabsTrigger>
         </TabsList>
 
         <div className="max-h-[50vh] overflow-y-auto pr-2">
@@ -117,11 +119,13 @@ function ProductForm({ product, token, onSave, onClose }) {
                   <SelectContent>{CATEGORIES.map(c => <SelectItem key={c} value={c}>{c.replace("_"," ")}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
-              <div><Label>Image URL</Label><Input value={form.image_url} onChange={e => setForm({...form, image_url: e.target.value})} className="rounded-xl" /></div>
+              <div><Label>Brand Name</Label><Input value={form.brand || ""} onChange={e => setForm({...form, brand: e.target.value})} className="rounded-xl" placeholder="e.g., AVANTRA" /></div>
             </div>
+            <div><Label>Image URL</Label><Input value={form.image_url} onChange={e => setForm({...form, image_url: e.target.value})} className="rounded-xl" /></div>
             <div><Label>Tagline (English)</Label><Input value={form.tagline?.en || ""} onChange={e => setForm({...form, tagline: {...form.tagline, en: e.target.value}})} className="rounded-xl" /></div>
             <div><Label>Overview (English)</Label><Textarea rows={3} value={form.overview?.en || ""} onChange={e => setForm({...form, overview: {...form.overview, en: e.target.value}})} className="rounded-xl" /></div>
             <div><Label>Dosage (English)</Label><Input value={form.dosage?.en || ""} onChange={e => setForm({...form, dosage: {...form.dosage, en: e.target.value}})} className="rounded-xl" /></div>
+            <div><Label>Crops</Label><Input value={form.crops || ""} onChange={e => setForm({...form, crops: e.target.value})} className="rounded-xl" placeholder="Field Crops, Vegetables, Fruits, etc." /></div>
             <div className="flex items-center gap-2"><input type="checkbox" checked={form.featured} onChange={e => setForm({...form, featured: e.target.checked})} className="rounded" /><Label>Featured Product</Label></div>
           </TabsContent>
 
@@ -148,6 +152,22 @@ function ProductForm({ product, token, onSave, onClose }) {
             <div>
               <Label>Key Advantages (one per line)</Label>
               <Textarea rows={8} value={advText} onChange={e => setAdvText(e.target.value)} className="rounded-xl" placeholder="Increases yield by 20-30%&#10;Improves fruit quality&#10;Enhances shelf life&#10;Eco-friendly formulation" />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="downloads" className="space-y-4 mt-0">
+            <div className="p-4 bg-blue-50 rounded-xl mb-4">
+              <p className="text-sm text-blue-700">Add downloadable documents for this product. These will appear as buttons on the product detail page.</p>
+            </div>
+            <div>
+              <Label>Product Manual URL</Label>
+              <Input value={form.manual_url || ""} onChange={e => setForm({...form, manual_url: e.target.value})} className="rounded-xl" placeholder="https://example.com/manual.pdf" />
+              <p className="text-xs text-gray-500 mt-1">Direct link to the product manual PDF</p>
+            </div>
+            <div>
+              <Label>Product Leaflet URL</Label>
+              <Input value={form.leaflet_url || ""} onChange={e => setForm({...form, leaflet_url: e.target.value})} className="rounded-xl" placeholder="https://example.com/leaflet.pdf" />
+              <p className="text-xs text-gray-500 mt-1">Direct link to the product leaflet PDF</p>
             </div>
           </TabsContent>
         </div>

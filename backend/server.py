@@ -44,6 +44,10 @@ class ProductCreate(BaseModel):
     dosage: Dict[str, str] = {}
     advantages: Dict[str, List[str]] = {}
     featured: bool = False
+    manual_url: str = ""
+    leaflet_url: str = ""
+    brand: str = ""
+    crops: str = ""
 
 
 class ContactCreate(BaseModel):

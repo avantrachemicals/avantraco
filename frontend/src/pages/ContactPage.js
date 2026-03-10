@@ -33,12 +33,23 @@ export default function ContactPage() {
   };
 
   return (
-    <div data-testid="contact-page">
-      {/* Header */}
-      <section className="py-16 bg-gradient-to-b from-orange-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl text-gray-900 mb-4" data-testid="contact-title">{t.title}</h1>
-          <p className="text-base text-gray-500 max-w-2xl mx-auto">{t.subtitle}</p>
+    <div data-testid="contact-page" className="bg-white">
+      {/* Header - Dark Premium Style */}
+      <section className="product-hero-bg min-h-[40vh] relative flex items-center">
+        <div className="absolute inset-0 opacity-20">
+          <img 
+            src="https://images.unsplash.com/photo-1586473219010-2ffc57b0d282?w=1920&q=80" 
+            alt="" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0d3d2a] via-[#0d3d2a]/90 to-transparent" />
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pt-32">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4" data-testid="contact-title">
+            {t.title}
+          </h1>
+          <p className="text-xl text-gray-300 max-w-2xl">{t.subtitle}</p>
         </div>
       </section>
 

@@ -24,21 +24,28 @@ export default function CareersPage() {
   }, []);
 
   return (
-    <div data-testid="careers-page">
-      {/* Hero */}
-      <section className="py-20 md:py-32 gradient-hero">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <Badge className="bg-[#D9F99D] text-[#044736] mb-6 text-sm font-semibold px-4 py-1">
-              We're Hiring
-            </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold text-[#044736] mb-6 leading-tight text-balance" data-testid="careers-title">
-              {t.title}
-            </h1>
-            <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
-              {t.subtitle}
-            </p>
-          </div>
+    <div data-testid="careers-page" className="bg-white">
+      {/* Hero - Dark Premium Style */}
+      <section className="product-hero-bg min-h-[50vh] relative flex items-center">
+        <div className="absolute inset-0 opacity-20">
+          <img 
+            src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1920&q=80" 
+            alt="" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0d3d2a] via-[#0d3d2a]/90 to-transparent" />
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pt-32">
+          <Badge className="bg-green-400/20 text-green-300 border-green-400/30 mb-6 text-sm font-semibold px-4 py-1">
+            We're Hiring
+          </Badge>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6" data-testid="careers-title">
+            {t.title}
+          </h1>
+          <p className="text-xl text-gray-300 max-w-2xl">
+            {t.subtitle}
+          </p>
         </div>
       </section>
 

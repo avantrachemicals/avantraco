@@ -6,11 +6,10 @@ import { translations } from "@/data/translations";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Globe, Menu, X, ChevronDown } from "lucide-react";
+import { Globe, Menu, ChevronDown } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
-
-const LANG_LABELS = { en: "English", te: "తెలుగు", kn: "ಕನ್ನಡ", hi: "हिंदी" };
+const LANG_LABELS = { en: "EN", te: "TE", kn: "KN", hi: "HI" };
 
 export default function Navbar() {
   const location = useLocation();
@@ -20,8 +19,10 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [settings, setSettings] = useState({});
 
+  const isHomePage = location.pathname === "/";
+
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -31,61 +32,57 @@ export default function Navbar() {
   }, []);
 
   const navLinks = [
-    { href: "/", label: t.home },
-    { href: "/about", label: t.about },
-    { href: "/products", label: t.products },
-    { href: "/gallery", label: "Gallery" },
-    { href: "/media", label: "Media" },
-    { href: "/dealers", label: t.dealers },
-    { href: "/careers", label: t.careers },
-    { href: "/contact", label: t.contact },
+    { href: "/about", label: "ABOUT" },
+    { href: "/products", label: "PRODUCTS" },
+    { href: "/gallery", label: "GALLERY" },
+    { href: "/media", label: "MEDIA" },
+    { href: "/dealers", label: "DEALERS" },
+    { href: "/contact", label: "CONTACT" },
   ];
 
   const isActive = (path) => location.pathname === path;
+  const isDark = isHomePage && !scrolled;
 
   return (
-    <nav className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? "navbar-glass shadow-sm" : "bg-white/95 backdrop-blur-sm"}`} data-testid="navbar">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isDark ? 'navbar-dark' : 'navbar-light shadow-sm'}`} data-testid="navbar">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3" data-testid="logo-link">
+          <Link to="/" className="flex items-center" data-testid="logo-link">
             {settings.logo_url ? (
               <img src={settings.logo_url} alt="Avantra" className="h-10 w-auto" />
             ) : (
-              <div className="flex items-center gap-2">
-                <div className="h-10 w-10 rounded-xl bg-[#044736] flex items-center justify-center">
-                  <span className="text-[#D9F99D] font-bold text-xl">A</span>
-                </div>
-                <span className="text-xl font-bold text-[#044736] hidden sm:block">Avantra</span>
+              <div className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                AVANTRA
               </div>
             )}
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                className={`text-sm font-medium tracking-wide transition-colors ${
                   isActive(link.href)
-                    ? "bg-[#D9F99D] text-[#044736]"
-                    : "text-gray-600 hover:text-[#044736] hover:bg-gray-100"
+                    ? 'text-green-500'
+                    : isDark ? 'text-white/80 hover:text-white' : 'text-gray-600 hover:text-gray-900'
                 }`}
-                data-testid={`nav-${link.href.replace("/", "") || "home"}`}
+                data-testid={`nav-${link.href.replace("/", "")}`}
               >
                 {link.label}
               </Link>
             ))}
           </div>
 
-          {/* Language Switcher & Mobile Menu */}
-          <div className="flex items-center gap-2">
+          {/* Language Switcher */}
+          <div className="flex items-center gap-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="rounded-full border-gray-200 gap-2" data-testid="language-switcher">
+                <Button variant="ghost" size="sm" className={`gap-1 ${isDark ? 'text-white hover:bg-white/10' : 'text-gray-600 hover:bg-gray-100'}`} data-testid="language-switcher">
                   <Globe className="h-4 w-4" />
-                  <span className="hidden sm:inline">{LANG_LABELS[language]}</span>
+                  <span className="text-xs font-medium">{LANG_LABELS[language]}</span>
                   <ChevronDown className="h-3 w-3" />
                 </Button>
               </DropdownMenuTrigger>
@@ -94,10 +91,10 @@ export default function Navbar() {
                   <DropdownMenuItem
                     key={lang}
                     onClick={() => setLanguage(lang)}
-                    className={`cursor-pointer ${language === lang ? "bg-[#D9F99D]/30 text-[#044736]" : ""}`}
+                    className={`cursor-pointer ${language === lang ? 'bg-green-50 text-green-600' : ''}`}
                     data-testid={`lang-${lang}`}
                   >
-                    {LANG_LABELS[lang]}
+                    {lang === 'en' ? 'English' : lang === 'te' ? 'తెలుగు' : lang === 'kn' ? 'ಕನ್ನಡ' : 'हिंदी'}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -106,31 +103,31 @@ export default function Navbar() {
             {/* Mobile Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild className="lg:hidden">
-                <Button variant="ghost" size="icon" className="rounded-full" data-testid="mobile-menu-btn">
-                  <Menu className="h-5 w-5" />
+                <Button variant="ghost" size="icon" className={isDark ? 'text-white hover:bg-white/10' : ''} data-testid="mobile-menu-btn">
+                  <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-80 p-0">
+              <SheetContent side="right" className="w-80 p-0 bg-white">
                 <div className="flex flex-col h-full">
-                  <div className="p-6 border-b flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="h-10 w-10 rounded-xl bg-[#044736] flex items-center justify-center">
-                        <span className="text-[#D9F99D] font-bold text-xl">A</span>
-                      </div>
-                      <span className="text-xl font-bold text-[#044736]">Avantra</span>
-                    </div>
+                  <div className="p-6 border-b">
+                    {settings.logo_url ? (
+                      <img src={settings.logo_url} alt="Avantra" className="h-8" />
+                    ) : (
+                      <div className="text-xl font-bold">AVANTRA</div>
+                    )}
                   </div>
                   <nav className="flex-1 p-6">
                     <div className="space-y-1">
+                      <Link to="/" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-base font-medium rounded-xl text-gray-900 hover:bg-gray-100">
+                        HOME
+                      </Link>
                       {navLinks.map((link) => (
                         <Link
                           key={link.href}
                           to={link.href}
                           onClick={() => setIsOpen(false)}
                           className={`block px-4 py-3 text-base font-medium rounded-xl transition-colors ${
-                            isActive(link.href)
-                              ? "bg-[#D9F99D] text-[#044736]"
-                              : "text-gray-600 hover:bg-gray-100"
+                            isActive(link.href) ? 'bg-green-50 text-green-600' : 'text-gray-600 hover:bg-gray-100'
                           }`}
                         >
                           {link.label}
@@ -138,22 +135,6 @@ export default function Navbar() {
                       ))}
                     </div>
                   </nav>
-                  <div className="p-6 border-t">
-                    <div className="text-xs text-gray-500 mb-2">Language</div>
-                    <div className="grid grid-cols-2 gap-2">
-                      {SUPPORTED_LANGS.map((lang) => (
-                        <button
-                          key={lang}
-                          onClick={() => { setLanguage(lang); setIsOpen(false); }}
-                          className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                            language === lang ? "bg-[#044736] text-white" : "bg-gray-100 text-gray-700"
-                          }`}
-                        >
-                          {LANG_LABELS[lang]}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
                 </div>
               </SheetContent>
             </Sheet>

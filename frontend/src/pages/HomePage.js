@@ -6,356 +6,293 @@ import { translations } from "@/data/translations";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ArrowRight, Sprout, Users, MapPin, Award, FlaskConical, Quote, ChevronRight, Dna, Microscope, Leaf, Zap, Clock, Shield, Play, X } from "lucide-react";
+import { ArrowRight, Sprout, Users, MapPin, Award, ChevronLeft, ChevronRight, Play, Quote } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
-const CATEGORY_COLORS = {
-  biostimulant: "bg-[#044736]", biofertilizer: "bg-blue-500",
-  liquid_fertilizer: "bg-orange-500", micronutrient: "bg-red-500", water_soluble: "bg-purple-500"
+const HERO_SLIDES = [
+  { title: "Nourishing Crops", subtitle: "that Nourish the World", image: "https://images.unsplash.com/photo-1724531281596-cfae90d5a082?w=1920&q=80" },
+  { title: "Boosting Soil Fertility", subtitle: "with High-Efficacy Biofertilisers", image: "https://images.unsplash.com/photo-1680726040280-8968cddc571b?w=1920&q=80" },
+  { title: "Enhancing Crop Growth", subtitle: "With Power-Packed Biostimulants", image: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=1920&q=80" },
+];
+
+const CATEGORY_ICONS = {
+  biostimulant: "🌱",
+  biofertilizer: "🌾",
+  liquid_fertilizer: "💧",
+  micronutrient: "⚡",
+  water_soluble: "🔬"
 };
 
 export default function HomePage() {
   const { language } = useLanguage();
   const t = translations[language] || translations.en;
-  const phyto = t.phytocode || translations.en.phytocode;
   const [products, setProducts] = useState([]);
   const [settings, setSettings] = useState({});
   const [videoTestimonials, setVideoTestimonials] = useState([]);
-  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [stats, setStats] = useState({});
 
   useEffect(() => {
-    axios.get(`${API}/products?featured=true`).then(r => setProducts(r.data)).catch(() => {});
+    axios.get(`${API}/products`).then(r => setProducts(r.data)).catch(() => {});
     axios.get(`${API}/settings`).then(r => setSettings(r.data)).catch(() => {});
     axios.get(`${API}/testimonials/videos?featured_only=true`).then(r => setVideoTestimonials(r.data)).catch(() => {});
+    axios.get(`${API}/stats`).then(r => setStats(r.data)).catch(() => {});
   }, []);
 
-  const heroImage = settings.hero_image || "https://images.unsplash.com/photo-1757031298556-c0c5c4b01e64?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODh8MHwxfHNlYXJjaHwyfHxyb3clMjBjcm9wcyUyMGFncmljdWx0dXJlJTIwZmllbGQlMjBncmVlbnxlbnwwfHx8fDE3NzMxNDQ1NjR8MA&ixlib=rb-4.1.0&q=85";
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % HERO_SLIDES.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
-  const statItems = [
-    { value: "70+", label: t.stats.dealers, icon: Users, color: "text-[#044736]", bg: "bg-[#D9F99D]" },
-    { value: "12,000+", label: t.stats.farmers, icon: Sprout, color: "text-blue-600", bg: "bg-blue-100" },
-    { value: "30,000+", label: t.stats.acres, icon: MapPin, color: "text-orange-600", bg: "bg-orange-100" },
-    { value: "64", label: t.stats.licenses, icon: Award, color: "text-purple-600", bg: "bg-purple-100" },
-  ];
+  const featuredProducts = products.filter(p => p.featured).slice(0, 4);
+  const productsByCategory = products.reduce((acc, p) => {
+    acc[p.category] = acc[p.category] || [];
+    acc[p.category].push(p);
+    return acc;
+  }, {});
 
   return (
-    <div data-testid="home-page">
-      {/* Hero Section */}
-      <section className="hero-section" style={{ backgroundImage: `url(${heroImage})` }} data-testid="hero-section">
-        <div className="hero-overlay" />
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
-          <div className="max-w-2xl">
-            <Badge className="bg-[#D9F99D]/20 text-[#D9F99D] border-[#D9F99D]/30 mb-6 animate-fade-in px-4 py-1.5 text-sm font-semibold">
-              <FlaskConical className="h-4 w-4 mr-2" /> {t.aboutTeaser.phytocode}
-            </Badge>
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl text-white mb-6 leading-[1.1] font-bold animate-fade-in-up text-balance" data-testid="hero-tagline">
-              {t.hero.tagline}
+    <div data-testid="home-page" className="bg-white">
+      {/* Hero Slider - Dark premium style */}
+      <section className="hero-dark min-h-[90vh] flex items-center relative" data-testid="hero-section">
+        {HERO_SLIDES.map((slide, idx) => (
+          <div key={idx} className={`absolute inset-0 transition-opacity duration-1000 ${currentSlide === idx ? 'opacity-100' : 'opacity-0'}`}>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-10" />
+            <img src={slide.image} alt="" className="w-full h-full object-cover" />
+          </div>
+        ))}
+        
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="max-w-3xl">
+            <div className="text-green-400 text-sm font-semibold tracking-wider uppercase mb-4 animate-fade-in-up">
+              Phytocode™ Technology
+            </div>
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-2 leading-tight animate-fade-in-up animation-delay-100">
+              {HERO_SLIDES[currentSlide].title}
             </h1>
-            <p className="text-lg sm:text-xl text-gray-200 mb-10 leading-relaxed animate-fade-in-up animation-delay-200">
-              {t.hero.subtitle}
-            </p>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-green-400 mb-8 animate-fade-in-up animation-delay-200">
+              {HERO_SLIDES[currentSlide].subtitle}
+            </h2>
             <div className="flex flex-wrap gap-4 animate-fade-in-up animation-delay-300">
-              <Button asChild size="lg" className="bg-[#D9F99D] hover:bg-[#c9e98d] text-[#044736] rounded-full px-8 py-6 text-base font-semibold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-testid="hero-cta">
-                <Link to="/products">{t.hero.cta} <ArrowRight className="ml-2 h-5 w-5" /></Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10 rounded-full px-8 py-6 text-base font-semibold" data-testid="hero-cta-secondary">
-                <Link to="/about">{t.hero.ctaSecondary}</Link>
-              </Button>
+              <Link to="/products">
+                <Button className="btn-green text-base px-8 py-6">
+                  Explore Products <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link to="/about">
+                <Button className="btn-outline-light text-base px-8 py-6">
+                  Learn More
+                </Button>
+              </Link>
             </div>
           </div>
+        </div>
+
+        {/* Slide indicators */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {HERO_SLIDES.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`w-3 h-3 rounded-full transition-all ${currentSlide === idx ? 'bg-green-400 w-8' : 'bg-white/30 hover:bg-white/50'}`}
+            />
+          ))}
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 md:py-20 bg-white" data-testid="stats-section">
+      <section className="py-16 bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {statItems.map((stat, i) => (
-              <Card key={i} className="stat-card border-0 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl">
-                <CardContent className="p-6 md:p-8 text-center">
-                  <div className={`h-14 w-14 rounded-2xl ${stat.bg} flex items-center justify-center mx-auto mb-4`}>
-                    <stat.icon className={`h-7 w-7 ${stat.color}`} />
-                  </div>
-                  <div className="text-3xl sm:text-4xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                  <div className="text-sm text-gray-500 font-medium">{stat.label}</div>
-                </CardContent>
-              </Card>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+            {[
+              { value: "70+", label: "Dealerships", icon: Users },
+              { value: "12K+", label: "Farmers Served", icon: Sprout },
+              { value: "30K+", label: "Acres Covered", icon: MapPin },
+              { value: "64", label: "Licensed Products", icon: Award }
+            ].map((stat, i) => (
+              <div key={i} className="text-center">
+                <div className="stat-number mb-2">{stat.value}</div>
+                <div className="text-gray-500 font-medium">{stat.label}</div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Phytocode Section - NEW */}
-      <section className="py-20 md:py-32 section-dark phytocode-section" data-testid="phytocode-section">
+      {/* Products Section - Premium Cards */}
+      <section className="py-24 bg-gray-50" data-testid="products-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div>
-              <Badge className="bg-[#D9F99D]/20 text-[#D9F99D] border-[#D9F99D]/30 mb-6 text-sm font-semibold px-4 py-1.5">
-                <Dna className="h-4 w-4 mr-2" /> Breakthrough Innovation
-              </Badge>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight text-balance font-accent">
-                {phyto.title}
-              </h2>
-              <p className="text-lg text-gray-300 leading-relaxed mb-8">
-                {phyto.intro}
-              </p>
-              
-              <div className="grid sm:grid-cols-3 gap-4 mb-8">
-                {[
-                  { icon: Zap, title: phyto.benefit1Title, desc: "2-3x longer stability" },
-                  { icon: Clock, title: phyto.benefit2Title, desc: "Reduced frequency" },
-                  { icon: Shield, title: phyto.benefit3Title, desc: "20-30% better uptake" }
-                ].map((item, i) => (
-                  <div key={i} className="glass-dark rounded-2xl p-5">
-                    <item.icon className="h-6 w-6 text-[#D9F99D] mb-3" />
-                    <h4 className="font-semibold text-white text-sm mb-1">{item.title}</h4>
-                    <p className="text-xs text-gray-400">{item.desc}</p>
-                  </div>
-                ))}
-              </div>
-
-              <Button asChild className="bg-[#D9F99D] hover:bg-[#c9e98d] text-[#044736] rounded-full px-8 py-6 text-base font-semibold">
-                <Link to="/about">{t.common.learnMore} <ChevronRight className="ml-1 h-5 w-5" /></Link>
-              </Button>
-            </div>
-
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-transparent rounded-3xl" />
-              <img
-                src={settings.phytocode_image || "https://images.unsplash.com/photo-1720202194910-75fd3bc2b820?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwxfHxwbGFudCUyMHRpc3N1ZSUyMGN1bHR1cmUlMjB0ZXN0JTIwdHViZSUyMGxhYm9yYXRvcnklMjBzY2llbmNlfGVufDB8fHx8MTc3MzE0NDQ1MTJ8MA&ixlib=rb-4.1.0&q=85"}
-                alt="Phytocode Technology"
-                className="rounded-3xl shadow-2xl w-full h-80 lg:h-[500px] object-cover"
-              />
-              <div className="absolute -bottom-6 -left-6 glass rounded-2xl p-6 shadow-xl max-w-xs">
-                <div className="flex items-center gap-4">
-                  <div className="h-14 w-14 rounded-full bg-[#D9F99D] flex items-center justify-center animate-pulse-glow">
-                    <Microscope className="h-7 w-7 text-[#044736]" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-gray-900">{phyto.howItWorksTitle}</div>
-                    <div className="text-xs text-gray-500">Nano-encapsulation + Bio-matrix</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="text-center mb-16">
+            <div className="text-green-600 font-semibold text-sm tracking-wider uppercase mb-4">Our Products</div>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              Breakthrough Biological Farm Inputs
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              We help farmers enhance the health and quality of the produce through our revolutionary 100% bioabled agri inputs built using our deep understanding of biology.
+            </p>
           </div>
-        </div>
-      </section>
 
-      {/* About Teaser */}
-      <section className="py-20 md:py-32 section-gradient" data-testid="about-teaser">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">{t.aboutTeaser.title}</h2>
-              <p className="text-lg text-gray-600 leading-relaxed mb-8">{t.aboutTeaser.description}</p>
-              <Button asChild className="bg-[#044736] hover:bg-[#033326] text-white rounded-full px-8 py-6 text-base font-semibold" data-testid="about-teaser-cta">
-                <Link to="/about">{t.common.learnMore} <ChevronRight className="ml-1 h-5 w-5" /></Link>
-              </Button>
-            </div>
-            <div className="relative">
-              <img
-                src={settings.about_image || "https://images.unsplash.com/photo-1595956481935-a9e254951d49?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBmYXJtZXIlMjBpbiUyMGZpZWxkJTIwc21pbGluZ3xlbnwwfHx8fDE3NzMxNDQ1MTl8MA&ixlib=rb-4.1.0&q=85"}
-                alt="Indian farmer"
-                className="rounded-3xl shadow-lg w-full h-80 lg:h-[450px] object-cover"
-              />
-              <div className="absolute -bottom-4 -right-4 bg-white rounded-2xl shadow-lg p-5 flex items-center gap-4">
-                <div className="h-14 w-14 rounded-2xl bg-[#D9F99D] flex items-center justify-center">
-                  <Leaf className="h-7 w-7 text-[#044736]" />
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-gray-900">{t.aboutTeaser.phytocode}</div>
-                  <div className="text-xs text-gray-500">Since 2024</div>
-                </div>
-              </div>
-            </div>
+          {/* Category Cards */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+            {Object.entries(productsByCategory).slice(0, 4).map(([category, prods]) => (
+              <Link to={`/products?category=${category}`} key={category}>
+                <Card className="product-card-premium h-full bg-white rounded-2xl overflow-hidden group cursor-pointer">
+                  <div className="product-image-wrapper p-8 bg-gray-50 transition-all duration-300">
+                    <div className="text-6xl mb-4">{CATEGORY_ICONS[category]}</div>
+                    <div className="text-xs font-bold tracking-wider text-gray-400 uppercase mb-2">
+                      {t.products[category] || category.replace("_", " ")}
+                    </div>
+                    <div className="text-lg font-bold text-gray-900">
+                      {prods.length} Products
+                    </div>
+                  </div>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-600">Explore</span>
+                      <ArrowRight className="h-5 w-5 text-green-500 group-hover:translate-x-2 transition-transform" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
           </div>
-        </div>
-      </section>
 
-      {/* Featured Products */}
-      <section className="py-20 md:py-32 bg-white" data-testid="featured-products">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <Badge className="bg-[#D9F99D] text-[#044736] mb-4">{t.products.featured}</Badge>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">{t.products.title}</h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">{t.products.subtitle}</p>
-          </div>
-          {products.length > 0 ? (
-            <Carousel opts={{ align: "start", loop: true }} className="mx-auto max-w-6xl">
-              <CarouselContent className="-ml-4">
-                {products.map((product) => (
-                  <CarouselItem key={product.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
-                    <Link to={`/products/${product.slug}`} data-testid={`product-card-${product.slug}`}>
-                      <Card className="product-card h-full border-0 shadow-sm overflow-hidden group">
-                        <div className="relative h-52 bg-gray-50">
-                          {product.image_url ? (
-                            <img src={product.image_url} alt={product.name} className="product-image w-full h-full object-contain p-6" />
-                          ) : (
-                            <div className="product-image-placeholder w-full h-full">
-                              <Sprout className="h-16 w-16 text-[#D9F99D]" />
-                            </div>
-                          )}
-                          {product.featured && (
-                            <Badge className="absolute top-3 right-3 bg-orange-500 text-white text-xs">{t.products.featured}</Badge>
-                          )}
-                        </div>
-                        <CardContent className="p-6">
-                          <Badge className={`${CATEGORY_COLORS[product.category] || "bg-gray-500"} text-white text-xs mb-3`}>
-                            {t.products[product.category] || product.category}
-                          </Badge>
-                          <h3 className="text-lg font-bold text-gray-900 mb-2">{product.name}</h3>
-                          <p className="text-sm text-gray-500 line-clamp-2 mb-4">{getLocalizedText(product.tagline, language)}</p>
-                          <span className="text-sm text-[#044736] font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-                            {t.products.viewProduct} <ArrowRight className="h-4 w-4" />
-                          </span>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="-left-4 lg:-left-12 bg-white shadow-lg" />
-              <CarouselNext className="-right-4 lg:-right-12 bg-white shadow-lg" />
-            </Carousel>
-          ) : (
-            <div className="text-center py-12 text-gray-400">{t.common.loading}</div>
+          {/* Featured Products */}
+          {featuredProducts.length > 0 && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProducts.map(product => (
+                <Link to={`/products/${product.slug}`} key={product.id} data-testid={`product-card-${product.slug}`}>
+                  <Card className="product-card-premium h-full bg-white rounded-2xl overflow-hidden group">
+                    <div className="product-image-wrapper aspect-square bg-gray-50 flex items-center justify-center p-8 transition-all">
+                      {product.image_url ? (
+                        <img src={product.image_url} alt={product.name} className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <Sprout className="h-20 w-20 text-green-300" />
+                      )}
+                    </div>
+                    <CardContent className="p-6">
+                      <Badge className={`badge-${product.category} text-white text-xs mb-3`}>
+                        {t.products[product.category] || product.category}
+                      </Badge>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">{product.name}</h3>
+                      <p className="text-sm text-gray-500 line-clamp-2 mb-4">{getLocalizedText(product.tagline, language)}</p>
+                      <div className="flex items-center text-green-600 font-medium text-sm group-hover:gap-2 transition-all">
+                        View Details <ArrowRight className="h-4 w-4 ml-1" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           )}
+
           <div className="text-center mt-12">
-            <Button asChild className="bg-[#044736] hover:bg-[#033326] text-white rounded-full px-10 py-6 text-base font-semibold" data-testid="view-all-products">
-              <Link to="/products">{t.hero.cta} <ArrowRight className="ml-2 h-5 w-5" /></Link>
-            </Button>
+            <Link to="/products">
+              <Button className="btn-dark text-base px-10 py-6">
+                View All Products <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Technology Section */}
+      <section className="py-24 section-dark-green" data-testid="technology-section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="text-green-400 font-semibold text-sm tracking-wider uppercase mb-4">Our Technologies</div>
+              <h2 className="text-4xl lg:text-5xl font-bold text-white mb-8">
+                Feed the plant when they need it
+              </h2>
+              <div className="space-y-6">
+                {[
+                  { num: "01", title: "Nutrient Delivery", desc: "Our proprietary Phytocode™ technology uses enzyme activators for effective nutrient uptake." },
+                  { num: "02", title: "Stress Protection", desc: "Enhances plants' defence mechanisms while maintaining nutrient uptake during stress." },
+                  { num: "03", title: "Extended Stability", desc: "Special regenerative complexes improve stability & shelf life for 2-3x longer effectiveness." }
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-6 items-start">
+                    <div className="text-4xl font-bold text-green-400/30">{item.num}</div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
+                      <p className="text-gray-300">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Link to="/about" className="mt-8 inline-block">
+                <Button className="btn-green text-base px-8 py-6">
+                  Learn About Phytocode™ <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+            <div className="relative">
+              <img
+                src={settings.phytocode_image || "https://images.pexels.com/photos/8851401/pexels-photo-8851401.jpeg?auto=compress&w=800"}
+                alt="Phytocode Technology"
+                className="rounded-3xl shadow-2xl w-full"
+              />
+              <div className="absolute -bottom-8 -left-8 bg-white rounded-2xl p-6 shadow-xl">
+                <div className="text-3xl font-bold text-green-600">20-30%</div>
+                <div className="text-sm text-gray-500">Better Nutrient Uptake</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 md:py-32 bg-gray-50" data-testid="testimonials-section">
+      <section className="py-24 bg-white" data-testid="testimonials-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">{t.testimonials.title}</h2>
+          <div className="text-center mb-16">
+            <div className="text-green-600 font-semibold text-sm tracking-wider uppercase mb-4">Hear From Our Growers</div>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900">
+              Success Stories
+            </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {t.testimonials.items.map((item, i) => (
-              <Card key={i} className="testimonial-card border-0 shadow-sm bg-white rounded-2xl">
-                <CardContent className="p-8">
-                  <Quote className="h-10 w-10 text-[#D9F99D] mb-4" />
-                  <p className="text-gray-600 leading-relaxed mb-6 italic">"{item.quote}"</p>
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full bg-[#044736] flex items-center justify-center text-white font-bold">
-                      {item.name.charAt(0)}
-                    </div>
-                    <div>
-                      <div className="font-bold text-gray-900">{item.name}</div>
-                      <div className="text-sm text-gray-500">{item.crop}, {item.location}</div>
-                    </div>
+              <Card key={i} className="testimonial-card">
+                <Quote className="h-10 w-10 text-green-200 mb-4" />
+                <p className="text-gray-600 leading-relaxed mb-6">"{item.quote}"</p>
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold">
+                    {item.name.charAt(0)}
                   </div>
-                </CardContent>
+                  <div>
+                    <div className="font-bold text-gray-900">{item.name}</div>
+                    <div className="text-sm text-gray-500">{item.crop} | {item.location}</div>
+                  </div>
+                </div>
               </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Video Testimonials */}
-      {videoTestimonials.length > 0 && (
-        <section className="py-20 md:py-32 bg-white" data-testid="video-testimonials-section">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <Badge className="bg-[#D9F99D] text-[#044736] mb-4">Farmer Stories</Badge>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Video Testimonials</h2>
-              <p className="text-lg text-gray-500 max-w-2xl mx-auto">Watch real farmers share their success stories with Avantra products</p>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {videoTestimonials.map((video) => (
-                <Card key={video.id} className="border-0 shadow-sm rounded-2xl overflow-hidden group cursor-pointer" onClick={() => setSelectedVideo(video)} data-testid={`video-testimonial-${video.id}`}>
-                  <div className="relative aspect-video bg-gray-100">
-                    {video.thumbnail_url ? (
-                      <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#044736] to-[#066d52]">
-                        <Play className="h-16 w-16 text-white/80" />
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/50 transition-colors">
-                      <div className="h-16 w-16 rounded-full bg-white/90 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Play className="h-8 w-8 text-[#044736] ml-1" />
-                      </div>
-                    </div>
-                  </div>
-                  <CardContent className="p-5">
-                    <h3 className="font-bold text-gray-900 mb-1">{video.title}</h3>
-                    <p className="text-sm text-gray-500">{video.farmer_name}{video.location ? `, ${video.location}` : ""}</p>
-                    {video.crop && <Badge variant="outline" className="mt-2 text-xs">{video.crop}</Badge>}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Video Modal */}
-      <Dialog open={!!selectedVideo} onOpenChange={() => setSelectedVideo(null)}>
-        <DialogContent className="max-w-4xl p-0 bg-black border-0 rounded-2xl overflow-hidden">
-          {selectedVideo && (
-            <div className="relative">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-4 right-4 text-white hover:bg-white/20 z-10 rounded-full"
-                onClick={() => setSelectedVideo(null)}
-              >
-                <X className="h-6 w-6" />
-              </Button>
-              <div className="aspect-video">
-                {selectedVideo.video_url.includes("youtube") || selectedVideo.video_url.includes("youtu.be") ? (
-                  <iframe
-                    src={selectedVideo.video_url.replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")}
-                    className="w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : selectedVideo.video_url.includes("vimeo") ? (
-                  <iframe
-                    src={selectedVideo.video_url.replace("vimeo.com/", "player.vimeo.com/video/")}
-                    className="w-full h-full"
-                    allow="autoplay; fullscreen; picture-in-picture"
-                    allowFullScreen
-                  />
-                ) : (
-                  <video src={selectedVideo.video_url} controls className="w-full h-full" />
-                )}
-              </div>
-              <div className="p-6 bg-black text-white">
-                <h3 className="text-xl font-bold mb-1">{selectedVideo.title}</h3>
-                <p className="text-gray-400">{selectedVideo.farmer_name}{selectedVideo.location ? `, ${selectedVideo.location}` : ""}</p>
-                {selectedVideo.quote && <p className="text-gray-300 mt-4 italic">"{selectedVideo.quote}"</p>}
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
       {/* CTA Section */}
-      <section className="py-20 md:py-32 section-dark" data-testid="cta-section">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-            {language === 'en' ? 'Ready to Transform Your Farm?' : language === 'te' ? 'మీ పొలాన్ని మార్చడానికి సిద్ధంగా ఉన్నారా?' : language === 'kn' ? 'ನಿಮ್ಮ ಕೃಷಿಯನ್ನು ಬದಲಾಯಿಸಲು ಸಿದ್ಧರಿದ್ದೀರಾ?' : 'अपने खेत को बदलने के लिए तैयार हैं?'}
+      <section className="py-24 hero-dark" data-testid="cta-section">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+            Ready to Transform Your Farm?
           </h2>
-          <p className="text-lg text-gray-300 mb-10 max-w-2xl mx-auto">
-            Join 12,000+ farmers across Karnataka and Andhra Pradesh who trust Avantra Chemicals for premium crop nutrition.
+          <p className="text-xl text-gray-300 mb-10">
+            Join thousands of farmers who trust Avantra Chemicals for premium crop nutrition solutions.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button asChild size="lg" className="bg-[#D9F99D] hover:bg-[#c9e98d] text-[#044736] rounded-full px-10 py-6 text-base font-semibold shadow-lg" data-testid="cta-contact">
-              <Link to="/contact">{t.nav.contact}</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10 rounded-full px-10 py-6 text-base font-semibold" data-testid="cta-dealers">
-              <Link to="/dealers">{t.dealers.becomeDealer}</Link>
-            </Button>
+            <Link to="/contact">
+              <Button className="btn-green text-base px-10 py-6">
+                Contact Us
+              </Button>
+            </Link>
+            <Link to="/dealers">
+              <Button className="btn-outline-light text-base px-10 py-6">
+                Become a Dealer
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
