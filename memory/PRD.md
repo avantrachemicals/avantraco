@@ -6,12 +6,14 @@ Build a complete, production-ready multipage website for Avantra Chemicals Pvt L
 ## User Personas
 1. **Farmers**: Looking for product information, dosage, and composition details in their local language
 2. **Dealers**: Interested in becoming distributors through the dealer application form
-3. **Admin**: Company staff managing products, viewing contact submissions and dealer applications
+3. **Job Seekers**: Looking for career opportunities at Avantra
+4. **Admin**: Company staff managing products, jobs, site settings, and viewing form submissions
 
 ## Core Requirements
 - Multilingual support: English (default), Telugu, Kannada, Hindi
-- Modern, minimalist, responsive design (green/blue/orange color scheme)
+- Modern, minimalist, responsive design with vibrant green/lime color scheme
 - Mobile-first design with Tailwind CSS
+- Admin panel for managing all content
 - Fast-loading, SEO-optimized
 
 ## Tech Stack
@@ -19,13 +21,15 @@ Build a complete, production-ready multipage website for Avantra Chemicals Pvt L
 - **Backend**: FastAPI + MongoDB
 - **Routing**: React Router
 - **State Management**: React Context (LanguageContext)
+- **Fonts**: Manrope (headings), DM Sans (body), Space Grotesk (accents)
 
 ## Pages & Features
 
 ### 1. Homepage (/)
-- Hero section with agricultural background
+- Hero section with dynamic hero image (configurable via admin)
 - Stats section (dealers, farmers, acres, licenses)
-- About teaser with Phytocode technology highlight
+- **NEW** Phytocode Technology section with detailed content about nano-encapsulation
+- About teaser
 - Featured products carousel
 - Customer testimonials
 - CTA section
@@ -37,48 +41,88 @@ Build a complete, production-ready multipage website for Avantra Chemicals Pvt L
 - Phytocode technology explanation
 - Company timeline (2024-2025)
 - Team and advisory board info
-- Corporate and factory addresses
 
 ### 3. Products Page (/products)
 - Filterable product grid (31 products)
 - Categories: Biostimulants, Biofertilizers, Liquid Fertilizers, Micronutrients, Water Soluble
 - Search functionality
-- Product cards with images, badges, taglines
 
 ### 4. Product Detail Page (/products/:slug)
 - Product image
 - Multilingual content: name, tagline, overview
-- Composition table
-- How It Works section
-- Growth Stages
-- Dosage recommendations
-- Advantages list
+- Composition table, How It Works, Growth Stages, Dosage, Advantages
 
 ### 5. Dealers Page (/dealers)
-- Network stats
 - Static dealer map placeholder (Karnataka & AP)
 - Dealer application form
 
 ### 6. Contact Page (/contact)
 - Contact form (saves to database)
-- Corporate office address
-- Factory address
-- Phone/Email info
+- Corporate and factory addresses
 
-### 7. Admin Panel (/admin)
-- Password-protected login (avantra2024)
-- Product management (CRUD operations)
-- Contact submissions viewer
-- Dealer applications viewer
-- Seed database button
+### 7. **NEW** Careers Page (/careers)
+- Job listings from admin
+- "Why Join Us" section with benefits
+- Links to individual job detail pages
+
+### 8. **NEW** Job Detail Page (/careers/:jobId)
+- Job description, requirements, responsibilities
+- Application form with file uploads:
+  - Name, Email, Phone, Address
+  - Current Company, Current CTC
+  - Passport photo (required)
+  - Resume PDF (required)
+  - Current payslip (optional)
+
+### 9. **NEW** Terms Page (/terms)
+- Terms & Conditions content
+
+### 10. **NEW** Privacy Page (/privacy)
+- Privacy Policy content
+
+### 11. **NEW** Corporate Page (/corporate)
+- Company overview, stats, registration info, addresses
+
+### 12. Admin Panel (/admin)
+- Password-protected (avantra2024)
+- **Products Tab**: CRUD for products
+- **NEW Jobs Tab**: Create/edit/delete job postings with active/inactive status
+- **NEW Applications Tab**: View job applications with file attachments
+- **Contacts Tab**: View contact form submissions
+- **Dealers Tab**: View dealer applications
+- **NEW Settings Tab**:
+  - Site images: Hero image, Logo, About image, Phytocode image
+  - Social media links: YouTube, Twitter, Instagram, Facebook, LinkedIn
 
 ## API Endpoints
+
+### Products
 - GET /api/products - List all products
 - GET /api/products/:slug - Get single product
 - POST /api/products - Create product (admin)
 - PUT /api/products/:id - Update product (admin)
 - DELETE /api/products/:id - Delete product (admin)
-- GET /api/stats - Get site statistics
+
+### Site Settings (NEW)
+- GET /api/settings - Get site settings
+- PUT /api/settings - Update settings (admin)
+
+### Jobs (NEW)
+- GET /api/jobs - List active jobs
+- GET /api/jobs?active_only=false - List all jobs (admin)
+- GET /api/jobs/:id - Get job by ID
+- POST /api/jobs - Create job (admin)
+- PUT /api/jobs/:id - Update job (admin)
+- DELETE /api/jobs/:id - Delete job (admin)
+
+### Job Applications (NEW)
+- POST /api/jobs/apply - Submit application with file uploads
+- GET /api/jobs/applications/list - List applications (admin)
+- GET /api/jobs/applications/:id - Get application details (admin)
+- PUT /api/jobs/applications/:id/status - Update status (admin)
+
+### Other
+- GET /api/stats - Get site statistics (now includes open_positions)
 - POST /api/contact - Submit contact form
 - GET /api/contact - List contacts (admin)
 - POST /api/dealers/apply - Submit dealer application
@@ -90,7 +134,7 @@ Build a complete, production-ready multipage website for Avantra Chemicals Pvt L
 
 ### Completed (December 2025)
 - [x] Full application scaffolding (React + FastAPI + MongoDB)
-- [x] All 7 pages with responsive design
+- [x] All 12 pages with responsive design
 - [x] Multilingual support (EN, TE, KN, HI)
 - [x] Language switcher in navbar
 - [x] 31 products with full multilingual content
@@ -99,11 +143,20 @@ Build a complete, production-ready multipage website for Avantra Chemicals Pvt L
 - [x] Dealer application form with database storage
 - [x] Admin panel with authentication
 - [x] Admin CRUD for products
-- [x] Admin views for contacts and dealer applications
+- [x] **NEW** Admin Settings tab for site images and social links
+- [x] **NEW** Admin Jobs tab for job postings CRUD
+- [x] **NEW** Admin Applications tab for viewing job applications
+- [x] **NEW** Careers page with job listings
+- [x] **NEW** Job detail page with application form (file uploads)
+- [x] **NEW** Terms, Privacy, Corporate pages
+- [x] **NEW** Phytocode Technology section on homepage
+- [x] **NEW** Row crops hero image
+- [x] **NEW** Vibrant green/lime design theme
+- [x] **NEW** Footer links to Terms, Privacy, Corporate
 - [x] Database seeding via API
 
 ### Testing Status
-- Backend: 22/22 tests passed (100%)
+- Backend: 42/42 tests passed (100%)
 - Frontend: All features tested and working
 
 ## Backlog / Future Enhancements
@@ -112,10 +165,10 @@ Build a complete, production-ready multipage website for Avantra Chemicals Pvt L
 - [ ] Add more product images (some products show placeholder)
 - [ ] SEO meta tags and schema markup
 - [ ] Accessibility improvements (ARIA, contrast)
-- [ ] Product image upload in admin panel
+- [ ] Image upload directly in admin panel (currently URL-based)
 
 ### P2 (Future)
-- [ ] Email notifications for contact/dealer submissions
+- [ ] Email notifications for form submissions
 - [ ] Product comparison feature
 - [ ] Farmer success stories section
 - [ ] Gallery page with company photos
@@ -129,15 +182,23 @@ Build a complete, production-ready multipage website for Avantra Chemicals Pvt L
 ```
 /app
 ├── backend/
-│   ├── server.py          # FastAPI application
+│   ├── server.py          # FastAPI application with all endpoints
 │   ├── seed_data.py       # 31 products with multilingual content
-│   └── tests/test_api.py  # API tests
+│   └── tests/             # API tests
 ├── frontend/
 │   ├── src/
-│   │   ├── pages/         # All page components
+│   │   ├── pages/         # All page components (12 pages)
 │   │   ├── components/    # Navbar, Footer
 │   │   ├── context/       # LanguageContext
 │   │   └── data/          # translations.js
 │   └── public/assets/     # Logo, product images
 └── test_reports/          # Test results
 ```
+
+## Design System
+- Primary: #044736 (Forest Green)
+- Secondary: #D9F99D (Lime)
+- Accent: #8B5CF6 (Purple)
+- Highlight: #F97316 (Orange)
+- Background: #FAF9F6 (Stone White)
+- Fonts: Manrope + DM Sans + Space Grotesk
